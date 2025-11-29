@@ -1,0 +1,204 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap');
+@import "tailwindcss";
+@import "preline/variants.css";
+@import "primeicons/primeicons.css";
+@source "../../node_modules/preline/dist/*.js";
+
+@font-face {
+    font-family: 'Archivo';
+    src: url('/assets/fonts/Archivo.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+html,
+body,
+#__nuxt {
+    height: 100%;
+    min-height: 100%;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    background-color: #09090B;
+    color: rgba(255,255,255,0.87);
+    font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
+    font-variation-settings: normal;
+}
+
+/* PrimeVue specific font improvements */
+.p-component {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+}
+
+/* Improve font rendering */
+* {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+}
+.p-dark, :root {
+  color-scheme: dark;
+}
+.input {
+  border: 1px solid #333;
+  background: #18181b!important;
+  color: #fff;
+}
+
+/* PrimeVue Button Overrides - Remove default green color */
+.p-button {
+  background: transparent !important;
+  border-color: #26272A !important;
+  color: rgba(255, 255, 255, 0.87) !important;
+}
+
+.p-button:not(.p-disabled):hover {
+  background: #27272A !important;
+  border-color: #3f3f46 !important;
+}
+
+/* Override default primary button color (green) */
+.p-button.p-button-primary {
+  background: #2563EB !important;
+  border-color: #2563EB !important;
+  color: white !important;
+}
+
+.p-button.p-button-primary:not(.p-disabled):hover {
+  background: #1D4ED8 !important;
+  border-color: #1D4ED8 !important;
+}
+
+/* Override outlined button */
+.p-button.p-button-outlined {
+  background: transparent !important;
+  border-color: #26272A !important;
+  color: rgba(255, 255, 255, 0.87) !important;
+}
+
+.p-button.p-button-outlined:not(.p-disabled):hover {
+  background: #18181B !important;
+  border-color: #3f3f46 !important;
+}
+
+/* Allow custom classes to override */
+.p-button.bg-\[#2563EB\] {
+  background: #2563EB !important;
+  border-color: #2563EB !important;
+}
+
+.p-button.bg-\[#2563EB\]:hover {
+  background: #1D4ED8 !important;
+  border-color: #1D4ED8 !important;
+}
+
+.p-button.border-\[#26272A\] {
+  border-color: #26272A !important;
+}
+
+.p-button.border-\[#2563EB\] {
+  border-color: #2563EB !important;
+}
+
+/* Severity overrides */
+.p-button.p-button-danger {
+  background: #ef4444 !important;
+  border-color: #ef4444 !important;
+}
+
+.p-button.p-button-danger:not(.p-disabled):hover {
+  background: #dc2626 !important;
+  border-color: #dc2626 !important;
+}
+
+.p-button.p-button-success {
+  background: #2563EB !important;
+  border-color: #2563EB !important;
+}
+
+.p-button.p-button-success:not(.p-disabled):hover {
+  background: #1D4ED8 !important;
+  border-color: #1D4ED8 !important;
+}
+
+.p-button.p-button-warning {
+  background: #f59e0b !important;
+  border-color: #f59e0b !important;
+}
+
+.p-button.p-button-warning:not(.p-disabled):hover {
+  background: #d97706 !important;
+  border-color: #d97706 !important;
+}
+
+.p-button.p-button-info {
+  background: #2563EB !important;
+  border-color: #2563EB !important;
+}
+
+.p-button.p-button-info:not(.p-disabled):hover {
+  background: #1D4ED8 !important;
+  border-color: #1D4ED8 !important;
+}
+
+/* Dialog and Input overrides */
+.p-dialog-header {
+  background: #18181B !important;
+  border-bottom: 1px solid #26272A !important;
+}
+
+.p-dialog-content {
+  background: #18181B !important;
+  color: rgba(255, 255, 255, 0.87) !important;
+}
+
+.p-inputtext {
+  background: #18181B !important;
+  border-color: #26272A !important;
+  color: rgba(255, 255, 255, 0.87) !important;
+}
+
+.p-inputtext:enabled:focus {
+  border-color: #2563EB !important;
+  box-shadow: 0 0 0 0.2rem rgba(37, 99, 235, 0.2) !important;
+}
+
+.p-dropdown {
+  background: #18181B !important;
+  border-color: #26272A !important;
+  color: rgba(255, 255, 255, 0.87) !important;
+}
+
+.p-dropdown:not(.p-disabled):hover {
+  border-color: #3f3f46 !important;
+}
+
+.p-dropdown:not(.p-disabled).p-focus {
+  border-color: #2563EB !important;
+  box-shadow: 0 0 0 0.2rem rgba(37, 99, 235, 0.2) !important;
+}
+
+.p-textarea {
+  background: #18181B !important;
+  border-color: #26272A !important;
+  color: rgba(255, 255, 255, 0.87) !important;
+}
+
+.p-textarea:enabled:focus {
+  border-color: #2563EB !important;
+  box-shadow: 0 0 0 0.2rem rgba(37, 99, 235, 0.2) !important;
+}
+
+/* ProgressBar */
+.p-progressbar-value {
+  background: #2563EB !important;
+}
+
+/* Checkbox and Radio */
+.p-checkbox-box.p-highlight {
+  background: #2563EB !important;
+  border-color: #2563EB !important;
+}
+
+.p-radiobutton-box.p-highlight {
+  background: #2563EB !important;
+  border-color: #2563EB !important;
+}

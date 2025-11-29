@@ -1,0 +1,39 @@
+{
+  "name": "palm-panel",
+  "version": "1.0.0",
+  "description": "PWA Builder - Создавайте и управляйте PWA приложениями",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "nuxt build",
+    "dev": "nuxt dev",
+    "generate": "nuxt generate",
+    "preview": "nuxt preview",
+    "postinstall": "nuxt prepare",
+    "start": "node .output/server/index.mjs",
+    "deploy": "npm run build && npm run start"
+  },
+  "dependencies": {
+    "@pinia/nuxt": "^0.11.2",
+    "@primevue/forms": "^4.3.6",
+    "@tailwindcss/vite": "^4.1.11",
+    "@tresjs/cientos": "^5.1.1",
+    "@tresjs/core": "^5.1.1",
+    "@tresjs/nuxt": "^5.1.1",
+    "axios": "^1.11.0",
+    "jwt-decode": "^4.0.0",
+    "nuxt": "^3.17.6",
+    "pinia": "^3.0.3",
+    "preline": "^3.1.0",
+    "primeicons": "^7.0.0",
+    "tailwindcss": "^4.1.11",
+    "three": "^0.181.2",
+    "vue": "^3.5.17",
+    "vue-router": "^4.5.1"
+  },
+  "devDependencies": {
+    "@primeuix/themes": "^1.2.1",
+    "@primevue/nuxt-module": "^4.3.6",
+    "primevue": "^4.3.6"
+  }
+}
