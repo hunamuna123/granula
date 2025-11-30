@@ -1655,6 +1655,9 @@ watch(selectedObject, (newObj) => {
   }
 }, { deep: true })
 
+// Флаг готовности редактора
+const isReady = ref(false)
+
 onMounted(() => {
   if (!container.value) {
     setTimeout(() => onMounted(), 100)
@@ -1662,14 +1665,13 @@ onMounted(() => {
   }
 
   initializeScene()
-  // НЕ вызываем createApartment() - ждём данные от API через loadSceneElements()
-  // Создаём пустую сцену вместо дефолтной квартиры
   createEmptyScene()
   setupControls()
   setupEventHandlers()
   startAnimation()
-  // initRooms() - комнаты будут загружены из API
   
+  // Отмечаем что редактор готов
+  isReady.value = true
   console.log('🎮 FloorPlanEditor mounted and ready for data')
   
   // Даем фокус контейнеру для работы горячих клавиш
@@ -3928,7 +3930,8 @@ defineExpose({
   loadSceneElements,
   getSceneElements,
   clearScene,
-  convertRecognitionToScene
+  convertRecognitionToScene,
+  isReady
 })
 </script>
 

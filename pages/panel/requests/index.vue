@@ -109,6 +109,16 @@
             <p v-if="request.comment" class="text-xs sm:text-sm text-gray-400 mt-2 line-clamp-2">
               {{ request.comment }}
             </p>
+            
+            <!-- Связанная планировка -->
+            <div v-if="request.floor_plan" class="mt-3 pt-3 border-t border-[#18181B]">
+              <div class="flex items-center gap-2 text-xs text-gray-400">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                </svg>
+                <span>{{ request.floor_plan.name }}</span>
+              </div>
+            </div>
           </div>
           <div class="flex items-center gap-2 self-end sm:self-start">
             <Button 
@@ -185,8 +195,11 @@ export default {
       apiStore: null,
       statusOptions: [
         { label: 'Все статусы', value: null },
+        { label: 'Черновик', value: 'draft' },
         { label: 'Ожидает', value: 'pending' },
+        { label: 'На проверке', value: 'review' },
         { label: 'В работе', value: 'in_progress' },
+        { label: 'Готово к выдаче', value: 'ready' },
         { label: 'Завершена', value: 'completed' },
         { label: 'Отменена', value: 'cancelled' }
       ],
@@ -200,14 +213,18 @@ export default {
       statusColors: {
         draft: 'bg-gray-500/20 text-gray-400',
         pending: 'bg-yellow-500/20 text-yellow-400',
+        review: 'bg-purple-500/20 text-purple-400',
         in_progress: 'bg-blue-500/20 text-blue-400',
+        ready: 'bg-cyan-500/20 text-cyan-400',
         completed: 'bg-green-500/20 text-green-400',
         cancelled: 'bg-red-500/20 text-red-400'
       },
       statusNames: {
         draft: 'Черновик',
         pending: 'Ожидает',
+        review: 'На проверке',
         in_progress: 'В работе',
+        ready: 'Готово к выдаче',
         completed: 'Завершена',
         cancelled: 'Отменена'
       },
@@ -260,9 +277,12 @@ export default {
             'Content-Type': 'application/json'
           }
         })
-        this.requests = result.requests || result.data || []
+        // API возвращает { data: { items: [...] } } или { data: [...] }
+        this.requests = result.data?.items || result.requests || result.data || []
+        if (!Array.isArray(this.requests)) this.requests = []
       } catch (error) {
         console.error('Ошибка загрузки заявок:', error)
+        this.requests = []
       } finally {
         this.loading = false
       }

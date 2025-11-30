@@ -9,15 +9,34 @@
       <div class="flex items-center gap-2">
         <Button 
           v-if="chatHistory.length > 0"
-          label="Очистить" 
-          icon="pi pi-trash" 
+          label="Новый чат" 
+          icon="pi pi-plus" 
           outlined
           size="small"
           class="border-[#26272A] text-white hover:bg-[#27272A] text-xs sm:text-sm"
-          @click="clearChat"
+          @click="startNewChat"
+        />
+        <Button 
+          v-if="chatHistory.length > 0"
+          icon="pi pi-trash" 
+          outlined
+          size="small"
+          severity="danger"
+          class="border-[#26272A] text-xs sm:text-sm"
+          @click="confirmClearHistory"
         />
       </div>
     </div>
+
+    <!-- Загрузка истории -->
+    <div v-if="loadingHistory" class="flex-1 flex items-center justify-center">
+      <div class="text-center">
+        <div class="animate-spin w-8 h-8 border-2 border-[#2563EB] border-t-transparent rounded-full mx-auto mb-3"></div>
+        <p class="text-gray-400 text-sm">Загрузка истории...</p>
+      </div>
+    </div>
+
+    <template v-else>
 
     <!-- Выбор контекста -->
     <div class="bg-[#26272A] rounded-xl p-3 sm:p-4 mb-3 sm:mb-4">
@@ -156,6 +175,24 @@
         </button>
       </div>
     </div>
+    </template>
+
+    <!-- Диалог очистки истории -->
+    <Dialog 
+      v-model:visible="showClearDialog" 
+      modal 
+      header="Очистить историю"
+      :style="{ width: '400px' }"
+    >
+      <p class="text-white mb-4">Вы уверены, что хотите удалить всю историю чата?</p>
+      <p class="text-gray-400 text-sm mb-6">Это действие нельзя отменить.</p>
+      <template #footer>
+        <div class="flex gap-3 justify-end">
+          <Button label="Отмена" outlined class="border-[#26272A] text-white hover:bg-[#27272A]" @click="showClearDialog = false" />
+          <Button label="Очистить" severity="danger" class="border-none" :loading="clearingHistory" @click="clearChatHistory" />
+        </div>
+      </template>
+    </Dialog>
   </div>
 </template>
 
@@ -177,10 +214,13 @@ export default {
       messageInput: '',
       selectedScene: null,
       scenes: [],
-      contextId: null,
+      sessionId: null,
       suggestions: [],
       loading: false,
       isTyping: false,
+      loadingHistory: false,
+      clearingHistory: false,
+      showClearDialog: false,
       apiStore: null,
       quickSuggestions: [
         'Как объединить кухню с гостиной?',
@@ -194,9 +234,17 @@ export default {
   created() {
     this.apiStore = useApiStore()
     this.accessTokenCookie = useCookie('access_token')
+    
+    // Загружаем session_id из localStorage
+    if (typeof localStorage !== 'undefined') {
+      this.sessionId = localStorage.getItem('ai_chat_session_id') || null
+    }
   },
   async mounted() {
-    await this.fetchScenes()
+    await Promise.all([
+      this.fetchScenes(),
+      this.loadChatHistory()
+    ])
   },
   methods: {
     async fetchScenes() {
@@ -211,9 +259,101 @@ export default {
             'Content-Type': 'application/json'
           }
         })
-        this.scenes = result.data || result || []
+        const scenes = result.data?.items || result.data?.scenes || result.data || result.scenes || result
+        this.scenes = Array.isArray(scenes) ? scenes : []
       } catch (error) {
         console.error('Ошибка загрузки сцен:', error)
+      }
+    },
+    
+    async loadChatHistory() {
+      try {
+        this.loadingHistory = true
+        
+        const params = new URLSearchParams()
+        if (this.sessionId) {
+          params.append('session_id', this.sessionId)
+        }
+        params.append('limit', 50)
+        
+        const result = await $fetch(`${this.apiStore.url}api/v1/ai/chat/history?${params.toString()}`, {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${this.accessTokenCookie.value}`,
+            'Content-Type': 'application/json'
+          }
+        })
+        
+        const data = result.data || result
+        
+        // Сохраняем session_id
+        if (data.session_id) {
+          this.sessionId = data.session_id
+          if (typeof localStorage !== 'undefined') {
+            localStorage.setItem('ai_chat_session_id', data.session_id)
+          }
+        }
+        
+        // Загружаем сообщения
+        if (data.messages && Array.isArray(data.messages)) {
+          this.chatHistory = data.messages.map(msg => ({
+            role: msg.role,
+            content: msg.content,
+            timestamp: msg.created_at || new Date().toISOString()
+          }))
+        }
+        
+        this.$nextTick(() => this.scrollToBottom())
+      } catch (error) {
+        console.log('История чата не найдена или пуста')
+      } finally {
+        this.loadingHistory = false
+      }
+    },
+    
+    confirmClearHistory() {
+      this.showClearDialog = true
+    },
+    
+    async clearChatHistory() {
+      try {
+        this.clearingHistory = true
+        
+        const params = this.sessionId ? `?session_id=${this.sessionId}` : ''
+        
+        await $fetch(`${this.apiStore.url}api/v1/ai/chat/history${params}`, {
+          method: 'DELETE',
+          headers: {
+            'Authorization': `Bearer ${this.accessTokenCookie.value}`,
+            'Content-Type': 'application/json'
+          }
+        })
+        
+        // Очищаем локально
+        this.chatHistory = []
+        this.suggestions = []
+        this.sessionId = null
+        
+        if (typeof localStorage !== 'undefined') {
+          localStorage.removeItem('ai_chat_session_id')
+        }
+        
+        this.showClearDialog = false
+      } catch (error) {
+        console.error('Ошибка очистки истории:', error)
+      } finally {
+        this.clearingHistory = false
+      }
+    },
+    
+    startNewChat() {
+      // Создаём новую сессию
+      this.chatHistory = []
+      this.suggestions = []
+      this.sessionId = null
+      
+      if (typeof localStorage !== 'undefined') {
+        localStorage.removeItem('ai_chat_session_id')
       }
     },
     async sendMessage() {
@@ -243,8 +383,8 @@ export default {
           body.scene_id = this.selectedScene
         }
         
-        if (this.contextId) {
-          body.context_id = this.contextId
+        if (this.sessionId) {
+          body.session_id = this.sessionId
         }
         
         const result = await $fetch(`${this.apiStore.url}api/v1/ai/chat`, {
@@ -258,9 +398,12 @@ export default {
 
         const data = result.data || result
 
-        // Сохраняем context_id для следующего сообщения
-        if (data.context_id) {
-          this.contextId = data.context_id
+        // Сохраняем session_id для следующего сообщения
+        if (data.session_id) {
+          this.sessionId = data.session_id
+          if (typeof localStorage !== 'undefined') {
+            localStorage.setItem('ai_chat_session_id', data.session_id)
+          }
         }
 
         // Добавляем ответ AI
@@ -289,11 +432,6 @@ export default {
     sendQuickMessage(message) {
       this.messageInput = message
       this.sendMessage()
-    },
-    clearChat() {
-      this.chatHistory = []
-      this.suggestions = []
-      this.contextId = null
     },
     scrollToBottom() {
       if (this.$refs.chatContainer) {

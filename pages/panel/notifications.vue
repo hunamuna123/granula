@@ -180,6 +180,7 @@ export default {
     async fetchNotifications() {
       this.loading = true
       try {
+        // GET /notifications
         const result = await $fetch(`${this.apiStore.url}api/v1/notifications`, {
           method: 'GET',
           headers: {
@@ -187,11 +188,38 @@ export default {
             'Content-Type': 'application/json'
           }
         })
-        this.notifications = result.notifications || result.data || []
+        // API может вернуть разные форматы
+        const notifications = result.data?.items || result.data?.notifications || result.notifications || result.data || []
+        this.notifications = Array.isArray(notifications) ? notifications : []
+        
+        // Также получаем количество непрочитанных
+        await this.fetchUnreadCount()
       } catch (error) {
         console.error('Ошибка загрузки уведомлений:', error)
+        this.notifications = []
       } finally {
         this.loading = false
+      }
+    },
+    
+    // GET /notifications/count - количество непрочитанных
+    async fetchUnreadCount() {
+      try {
+        const result = await $fetch(`${this.apiStore.url}api/v1/notifications/count`, {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${this.accessTokenCookie.value}`,
+            'Content-Type': 'application/json'
+          }
+        })
+        const data = result.data || result
+        // Используем значение из API если оно есть
+        if (data.count !== undefined || data.unread !== undefined) {
+          // Обновляем локальный список на основе этого
+          console.log('Unread count from API:', data.count || data.unread)
+        }
+      } catch (error) {
+        // Не критично, используем локальный подсчёт
       }
     },
     getNotificationBgColor(type) {

@@ -70,12 +70,12 @@
             <div class="flex items-center gap-3">
               <div class="w-10 h-10 bg-[#2563EB]/20 rounded-lg flex items-center justify-center">
                 <svg class="w-5 h-5 text-[#2563EB]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z" />
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
                 </svg>
               </div>
               <div>
-                <div class="text-2xl font-bold text-white">{{ workspace.member_count || 0 }}</div>
-                <div class="text-sm text-gray-400">Участников</div>
+                <div class="text-2xl font-bold text-white">{{ floorPlans.length }}</div>
+                <div class="text-sm text-gray-400">Планировок</div>
               </div>
             </div>
           </div>
@@ -83,12 +83,12 @@
             <div class="flex items-center gap-3">
               <div class="w-10 h-10 bg-purple-500/20 rounded-lg flex items-center justify-center">
                 <svg class="w-5 h-5 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z" />
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z" />
                 </svg>
               </div>
               <div>
-                <div class="text-2xl font-bold text-white">{{ scenes.length }}</div>
-                <div class="text-sm text-gray-400">Сцен</div>
+                <div class="text-2xl font-bold text-white">{{ workspace.member_count || members.length || 1 }}</div>
+                <div class="text-sm text-gray-400">Участников</div>
               </div>
             </div>
           </div>
@@ -107,40 +107,66 @@
           </div>
         </div>
 
-        <!-- Сцены воркспейса -->
+        <!-- Планировки воркспейса -->
         <div class="bg-[#26272A] rounded-xl border border-[#26272A]">
           <div class="p-4 border-b border-[#18181B] flex items-center justify-between">
-            <h3 class="text-lg font-semibold text-white">Сцены</h3>
+            <h3 class="text-lg font-semibold text-white">Планировки</h3>
+            <NuxtLink :to="`/panel/plane/create?workspace=${workspaceId}`">
+              <Button 
+                label="Создать" 
+                icon="pi pi-plus" 
+                size="small"
+                class="bg-[#2563EB] hover:bg-[#1d4ed8] border-none"
+              />
+            </NuxtLink>
           </div>
-          <div v-if="loadingScenes" class="p-6">
+          <div v-if="loadingFloorPlans" class="p-6">
             <div class="animate-pulse space-y-3">
-              <div v-for="i in 3" :key="i" class="h-16 bg-[#18181B] rounded-lg"></div>
+              <div v-for="i in 3" :key="i" class="h-20 bg-[#18181B] rounded-lg"></div>
             </div>
           </div>
-          <div v-else-if="scenes.length === 0" class="p-6 text-center">
-            <p class="text-gray-400">Нет сцен в этом воркспейсе</p>
+          <div v-else-if="floorPlans.length === 0" class="p-8 text-center">
+            <div class="w-16 h-16 bg-[#18181B] rounded-full flex items-center justify-center mx-auto mb-4">
+              <svg class="w-8 h-8 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+              </svg>
+            </div>
+            <p class="text-gray-400 mb-4">Нет планировок в этом воркспейсе</p>
+            <NuxtLink :to="`/panel/plane/create?workspace=${workspaceId}`">
+              <Button 
+                label="Создать первую планировку" 
+                icon="pi pi-plus" 
+                class="bg-[#2563EB] hover:bg-[#1d4ed8] border-none"
+              />
+            </NuxtLink>
           </div>
           <div v-else class="divide-y divide-[#18181B]">
             <div 
-              v-for="scene in scenes" 
-              :key="scene.id"
-              class="p-4 hover:bg-[#18181B]/50 transition-colors"
+              v-for="plan in floorPlans" 
+              :key="plan.id"
+              class="p-4 hover:bg-[#18181B]/50 transition-colors cursor-pointer"
+              @click="navigateToFloorPlan(plan.id)"
             >
               <div class="flex items-center justify-between">
-                <div>
-                  <div class="font-medium text-white">{{ scene.name }}</div>
-                  <div class="text-sm text-gray-400">{{ scene.description || 'Без описания' }}</div>
+                <div class="flex items-center gap-4">
+                  <div class="w-12 h-12 bg-[#18181B] rounded-lg flex items-center justify-center flex-shrink-0">
+                    <svg class="w-6 h-6 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                    </svg>
+                  </div>
+                  <div>
+                    <div class="font-medium text-white">{{ plan.name }}</div>
+                    <div class="text-sm text-gray-400">{{ formatDate(plan.updated_at || plan.created_at) }}</div>
+                  </div>
                 </div>
-                <div class="flex items-center gap-2">
-                  <span :class="[
-                    'px-2 py-1 rounded-full text-xs font-medium',
-                    getStatusClass(scene.status)
-                  ]">
-                    {{ getStatusLabel(scene.status) }}
-                  </span>
-                  <span class="text-sm text-gray-400">
-                    {{ scene.element_count }} элементов
-                  </span>
+                <div class="flex items-center gap-3">
+                  <Button 
+                    icon="pi pi-pencil" 
+                    text
+                    size="small"
+                    class="text-gray-400 hover:text-white"
+                    @click.stop="navigateToFloorPlan(plan.id)"
+                  />
                 </div>
               </div>
             </div>
@@ -350,9 +376,11 @@ const workspaceIdCookie = useCookie('workspace_id', { maxAge: 60 * 60 * 24 * 365
 const workspace = ref(null)
 const members = ref([])
 const scenes = ref([])
+const floorPlans = ref([])
 const loading = ref(true)
 const loadingMembers = ref(false)
 const loadingScenes = ref(false)
+const loadingFloorPlans = ref(false)
 const error = ref(null)
 
 // Dialogs
@@ -425,8 +453,8 @@ async function loadWorkspace() {
       description: workspace.value.description || ''
     }
     
-    // Load members and scenes in parallel
-    await Promise.all([loadMembers(), loadScenes()])
+    // Load members, scenes and floor plans in parallel
+    await Promise.all([loadMembers(), loadScenes(), loadFloorPlans()])
   } catch (err) {
     error.value = err.message || 'Ошибка загрузки воркспейса'
   } finally {
@@ -462,12 +490,37 @@ async function loadScenes() {
         'Content-Type': 'application/json'
       }
     })
-    scenes.value = result.data?.scenes || result.scenes || []
+    scenes.value = result.data?.items || result.data?.scenes || result.data || result.scenes || []
+    if (!Array.isArray(scenes.value)) scenes.value = []
   } catch (err) {
     console.error('Ошибка загрузки сцен:', err)
   } finally {
     loadingScenes.value = false
   }
+}
+
+async function loadFloorPlans() {
+  loadingFloorPlans.value = true
+  try {
+    const result = await $fetch(`${apiStore.url}api/v1/floor-plans?workspace_id=${workspaceId}`, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${accessToken.value}`,
+        'Content-Type': 'application/json'
+      }
+    })
+    // API возвращает { data: { items: [...], total: N } }
+    floorPlans.value = result.data?.items || result.floor_plans || result.data || []
+    if (!Array.isArray(floorPlans.value)) floorPlans.value = []
+  } catch (err) {
+    console.error('Ошибка загрузки планировок:', err)
+  } finally {
+    loadingFloorPlans.value = false
+  }
+}
+
+function navigateToFloorPlan(id) {
+  router.push(`/panel/plane/${id}`)
 }
 
 async function updateWorkspace() {

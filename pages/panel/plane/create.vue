@@ -404,6 +404,7 @@ export default {
           if (recognizeData?.job_id) {
             await this.pollRecognitionStatus(recognizeData.job_id, floorPlan.id)
           } else {
+            localStorage.setItem(`newly_created_${floorPlan.id}`, 'true')
             this.$router.push(`/panel/plane/${floorPlan.id}`)
           }
         }
@@ -474,18 +475,20 @@ export default {
                 })
                 
                 const scene = sceneResult.data || sceneResult
-                console.log('✅ Scene created:', scene?.id)
+                console.log('✅ Scene created:', scene?.id, 'floor_plan_id:', floorPlanId)
                 
-                // Сохраняем scene_id
+                // Переходим на страницу редактирования по SCENE ID!
                 if (scene?.id) {
-                  localStorage.setItem(`scene_${floorPlanId}`, scene.id)
+                  self.$router.push(`/panel/plane/${scene.id}`)
+                  return
                 }
               } catch (e) {
                 console.error('Ошибка создания сцены:', e)
               }
             }
             
-            // Переходим на страницу редактирования
+            // Fallback: если сцена не создалась - переходим по floor_plan_id
+            localStorage.setItem(`newly_created_${floorPlanId}`, 'true')
             self.$router.push(`/panel/plane/${floorPlanId}`)
             return
           }
@@ -521,6 +524,7 @@ export default {
       setTimeout(() => {
         clearInterval(pollInterval)
         if (self.processing) {
+          localStorage.setItem(`newly_created_${floorPlanId}`, 'true')
           self.$router.push(`/panel/plane/${floorPlanId}`)
         }
       }, 120000)

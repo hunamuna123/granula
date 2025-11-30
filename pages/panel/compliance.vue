@@ -241,49 +241,125 @@ export default {
             'Content-Type': 'application/json'
           }
         })
-        this.scenes = result.data || result || []
+        // API может вернуть разные форматы
+        const scenes = result.data?.items || result.data?.scenes || result.data || result.scenes || result
+        this.scenes = Array.isArray(scenes) ? scenes : []
       } catch (error) {
         console.error('Ошибка загрузки сцен:', error)
       }
     },
+    
+    // GET /scenes/{id}/compliance - проверка сцены
     async runCheck() {
       if (!this.selectedScene) return
       
       this.checkingInProgress = true
       
       try {
-        const result = await $fetch(`${this.apiStore.url}api/v1/compliance/check`, {
+        // Сначала пробуем GET /scenes/{id}/compliance
+        const result = await $fetch(`${this.apiStore.url}api/v1/scenes/${this.selectedScene}/compliance`, {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${this.accessTokenCookie.value}`,
+            'Content-Type': 'application/json'
+          }
+        })
+        
+        const data = result.data || result
+        this.processComplianceResult(data)
+      } catch (error) {
+        // Fallback на POST /compliance/check
+        try {
+          const result = await $fetch(`${this.apiStore.url}api/v1/compliance/check`, {
+            method: 'POST',
+            headers: {
+              'Authorization': `Bearer ${this.accessTokenCookie.value}`,
+              'Content-Type': 'application/json'
+            },
+            body: {
+              scene_id: this.selectedScene
+            }
+          })
+          
+          const data = result.data || result
+          this.processComplianceResult(data)
+        } catch (e) {
+          console.error('Ошибка проверки:', e)
+        }
+      } finally {
+        this.checkingInProgress = false
+      }
+    },
+    
+    processComplianceResult(data) {
+      const violations = data.violations || []
+      const warnings = data.warnings || []
+      const passedRules = data.passed_rules || data.passed || 0
+      const totalRules = data.total_rules || data.total || (violations.length + warnings.length + passedRules) || 1
+      
+      this.lastCheckResult = {
+        is_compliant: data.compliant ?? data.is_compliant ?? (violations.length === 0),
+        violations: violations,
+        warnings: warnings,
+        passed_rules: passedRules || Math.max(0, totalRules - violations.length - warnings.length),
+        total_rules: totalRules,
+        overall_score: data.score ?? data.overall_score ?? (violations.length === 0 ? 100 : Math.max(0, 100 - violations.length * 15 - warnings.length * 5))
+      }
+    },
+    
+    // POST /compliance/report - генерация отчёта
+    async generateReport() {
+      if (!this.selectedScene) return null
+      
+      try {
+        const result = await $fetch(`${this.apiStore.url}api/v1/compliance/report`, {
           method: 'POST',
           headers: {
             'Authorization': `Bearer ${this.accessTokenCookie.value}`,
             'Content-Type': 'application/json'
           },
           body: {
-            scene_id: this.selectedScene
+            scene_id: this.selectedScene,
+            format: 'pdf'
           }
         })
         
         const data = result.data || result
-        // Нормализуем поля ответа
-        this.lastCheckResult = {
-          is_compliant: data.compliant,
-          violations: data.violations || [],
-          warnings: data.warnings || [],
-          passed_rules: data.violations ? 0 : 1,
-          total_rules: (data.violations?.length || 0) + (data.warnings?.length || 0) + 1,
-          overall_score: data.compliant ? 100 : Math.max(0, 100 - (data.violations?.length || 0) * 20)
-        }
+        return data.url || data.report_url
       } catch (error) {
-        console.error('Ошибка проверки:', error)
-      } finally {
-        this.checkingInProgress = false
+        console.error('Ошибка генерации отчёта:', error)
+        return null
+      }
+    },
+    
+    // GET /compliance/rules - список правил
+    async fetchRules() {
+      try {
+        const result = await $fetch(`${this.apiStore.url}api/v1/compliance/rules`, {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${this.accessTokenCookie.value}`,
+            'Content-Type': 'application/json'
+          }
+        })
+        
+        return result.data?.items || result.data || result.rules || []
+      } catch (error) {
+        console.error('Ошибка загрузки правил:', error)
+        return []
       }
     },
     getCategoryName(category) {
       return this.categoryNames[category] || category
     },
-    exportPDF() {
-      console.log('Export PDF')
+    async exportPDF() {
+      const url = await this.generateReport()
+      if (url) {
+        window.open(url, '_blank')
+      } else {
+        // Fallback - генерируем локально
+        console.log('PDF generation not available from server')
+      }
     },
     orderConsultation() {
       this.$router.push('/panel/requests/create?type=consultation')
