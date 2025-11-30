@@ -1,40 +1,40 @@
 <template>
-  <div class="space-y-6">
+  <div class="space-y-4 sm:space-y-6">
     <!-- Требуется выбрать воркспейс -->
-    <div v-if="!hasWorkspace" class="text-center py-12">
-      <div class="max-w-md mx-auto">
-        <div class="w-20 h-20 bg-[#2563EB]/20 rounded-full flex items-center justify-center mx-auto mb-6">
-          <svg class="w-10 h-10 text-[#2563EB]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <div v-if="!hasWorkspace" class="text-center py-8 sm:py-12">
+      <div class="max-w-md mx-auto px-4">
+        <div class="w-16 h-16 sm:w-20 sm:h-20 bg-[#2563EB]/20 rounded-full flex items-center justify-center mx-auto mb-4 sm:mb-6">
+          <svg class="w-8 h-8 sm:w-10 sm:h-10 text-[#2563EB]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
           </svg>
         </div>
-        <h2 class="text-2xl font-bold text-white mb-3">Выберите рабочее пространство</h2>
-        <p class="text-gray-400 mb-6">
+        <h2 class="text-xl sm:text-2xl font-bold text-white mb-2 sm:mb-3">Выберите рабочее пространство</h2>
+        <p class="text-sm sm:text-base text-gray-400 mb-4 sm:mb-6">
           Для создания планировки необходимо сначала создать или выбрать рабочее пространство
         </p>
         <NuxtLink to="/panel/workspaces">
-          <Button label="Перейти к воркспейсам" icon="pi pi-arrow-right" class="bg-[#2563EB] hover:bg-[#1d4ed8] border-none" />
+          <Button label="Перейти к воркспейсам" icon="pi pi-arrow-right" class="bg-[#2563EB] hover:bg-[#1d4ed8] border-none text-sm" />
         </NuxtLink>
       </div>
     </div>
 
     <template v-else>
-      <div class="flex items-center justify-between">
+      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4">
         <div>
-          <h1 class="text-2xl font-bold text-white mb-2">Создать планировку</h1>
-          <p class="text-gray-400">Загрузите план квартиры для автоматической оцифровки</p>
+          <h1 class="text-xl sm:text-2xl font-bold text-white mb-1 sm:mb-2">Создать планировку</h1>
+          <p class="text-sm sm:text-base text-gray-400">Загрузите план квартиры для автоматической оцифровки</p>
         </div>
-        <NuxtLink to="/panel/plane/list">
-          <Button label="Назад к списку" icon="pi pi-arrow-left" outlined class="border-[#26272A] text-white hover:bg-[#27272A]" />
+        <NuxtLink to="/panel/plane/list" class="sm:flex-shrink-0">
+          <Button label="Назад к списку" icon="pi pi-arrow-left" outlined class="w-full sm:w-auto border-[#26272A] text-white hover:bg-[#27272A] text-sm" />
         </NuxtLink>
       </div>
 
-      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
       <!-- Левая колонка - Загрузка и информация -->
-      <div class="lg:col-span-1 space-y-6">
+      <div class="lg:col-span-1 space-y-4 sm:space-y-6 order-2 lg:order-1">
         <!-- Шаги -->
-        <div class="bg-[#26272A] rounded-xl p-6 border border-[#26272A]">
-          <h3 class="text-lg font-semibold text-white mb-4">Процесс создания</h3>
+        <div class="bg-[#26272A] rounded-xl p-4 sm:p-6 border border-[#26272A]">
+          <h3 class="text-base sm:text-lg font-semibold text-white mb-3 sm:mb-4">Процесс создания</h3>
           <div class="space-y-4">
             <div class="flex items-start gap-3">
               <div :class="[
@@ -76,9 +76,9 @@
         </div>
 
         <!-- Информация о загрузке -->
-        <div class="bg-[#26272A] rounded-xl p-6 border border-[#26272A]">
-          <h3 class="text-lg font-semibold text-white mb-4">Рекомендации</h3>
-          <ul class="space-y-3 text-sm text-gray-400">
+        <div class="bg-[#26272A] rounded-xl p-4 sm:p-6 border border-[#26272A]">
+          <h3 class="text-base sm:text-lg font-semibold text-white mb-3 sm:mb-4">Рекомендации</h3>
+          <ul class="space-y-2 sm:space-y-3 text-xs sm:text-sm text-gray-400">
             <li class="flex items-start gap-2">
               <svg class="w-5 h-5 text-[#2563EB] flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -108,14 +108,14 @@
       </div>
 
       <!-- Правая колонка - Загрузка и превью -->
-      <div class="lg:col-span-2 space-y-6">
+      <div class="lg:col-span-2 space-y-4 sm:space-y-6 order-1 lg:order-2">
         <!-- Зона загрузки -->
-        <div class="bg-[#26272A] rounded-xl p-6 border border-[#26272A]">
-          <h3 class="text-lg font-semibold text-white mb-4">Загрузка плана</h3>
+        <div class="bg-[#26272A] rounded-xl p-4 sm:p-6 border border-[#26272A]">
+          <h3 class="text-base sm:text-lg font-semibold text-white mb-3 sm:mb-4">Загрузка плана</h3>
           
           <div 
             v-if="!uploadedFile"
-            class="border-2 border-dashed border-[#26272A] rounded-xl p-12 text-center hover:border-[#2563EB] transition-colors cursor-pointer"
+            class="border-2 border-dashed border-[#26272A] rounded-xl p-6 sm:p-12 text-center hover:border-[#2563EB] transition-colors cursor-pointer"
             @click="triggerFileInput"
             @dragover.prevent="isDragging = true"
             @dragleave.prevent="isDragging = false"
@@ -129,20 +129,20 @@
               class="hidden"
               @change="handleFileSelect"
             />
-            <div class="space-y-4">
+            <div class="space-y-3 sm:space-y-4">
               <div class="flex justify-center">
-                <svg class="w-16 h-16 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="w-12 h-12 sm:w-16 sm:h-16 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
                 </svg>
               </div>
               <div>
-                <p class="text-white font-medium mb-2">Перетащите файл сюда или нажмите для выбора</p>
-                <p class="text-gray-400 text-sm">JPG, PNG или PDF до 10 МБ</p>
+                <p class="text-white text-sm sm:text-base font-medium mb-1 sm:mb-2">Перетащите файл сюда или нажмите для выбора</p>
+                <p class="text-gray-400 text-xs sm:text-sm">JPG, PNG или PDF до 10 МБ</p>
               </div>
               <Button 
                 label="Выбрать файл" 
                 icon="pi pi-upload"
-                class="bg-[#2563EB] hover:bg-[#1d4ed8] border-none"
+                class="bg-[#2563EB] hover:bg-[#1d4ed8] border-none text-sm"
                 @click.stop="triggerFileInput"
               />
             </div>
@@ -417,10 +417,9 @@ export default {
       return new Promise((resolve, reject) => {
         const reader = new FileReader()
         reader.onload = () => {
-          // Remove data URL prefix (data:image/jpeg;base64,) to get raw base64
-          const result = reader.result
-          const base64 = result.split(',')[1] || result
-          resolve(base64)
+          // Возвращаем ПОЛНЫЙ data URL (data:image/jpeg;base64,...)
+          // API ожидает именно такой формат
+          resolve(reader.result)
         }
         reader.onerror = reject
         reader.readAsDataURL(file)
@@ -447,13 +446,21 @@ export default {
             self.processingProgress = 100
             self.processingStatus = 'Распознавание завершено!'
             
-            // Создаём сцену из результата распознавания
-            if (data.result && self.workspaceIdCookie.value) {
+            console.log('✅ Recognition completed:', data.result)
+            
+            // Сохраняем recognition result в localStorage для передачи на страницу редактора
+            if (data.result) {
               try {
-                // Конвертируем recognition result в scene elements
-                const elements = self.convertRecognitionToScene(data.result)
-                
-                await $fetch(`${self.apiStore.url}api/v1/workspaces/${self.workspaceIdCookie.value}/scenes`, {
+                localStorage.setItem(`recognition_${floorPlanId}`, JSON.stringify(data.result))
+              } catch (e) {
+                console.warn('Could not save recognition result to localStorage:', e)
+              }
+            }
+            
+            // Создаём сцену (сервер сам заполняет elements из floor_plan_id)
+            if (self.workspaceIdCookie.value) {
+              try {
+                const sceneResult = await $fetch(`${self.apiStore.url}api/v1/workspaces/${self.workspaceIdCookie.value}/scenes`, {
                   method: 'POST',
                   headers: {
                     'Authorization': `Bearer ${self.accessTokenCookie.value}`,
@@ -461,16 +468,24 @@ export default {
                   },
                   body: {
                     name: self.planName.trim(),
-                    description: self.planDescription.trim() || undefined,
-                    floor_plan_id: floorPlanId,
-                    elements: elements
+                    description: 'Created from recognition result',
+                    floor_plan_id: floorPlanId
                   }
                 })
+                
+                const scene = sceneResult.data || sceneResult
+                console.log('✅ Scene created:', scene?.id)
+                
+                // Сохраняем scene_id
+                if (scene?.id) {
+                  localStorage.setItem(`scene_${floorPlanId}`, scene.id)
+                }
               } catch (e) {
                 console.error('Ошибка создания сцены:', e)
               }
             }
             
+            // Переходим на страницу редактирования
             self.$router.push(`/panel/plane/${floorPlanId}`)
             return
           }
@@ -567,23 +582,97 @@ export default {
           'STORAGE': 'storage',
           'LAUNDRY': 'combined',
           'BALCONY': 'balcony',
-          'LOGGIA': 'loggia'
+          'LOGGIA': 'loggia',
+          'unknown': 'living'
         }
         
+        // Создаём карту стен для вычисления полигонов комнат
+        const wallsMap = {}
+        elements.walls.forEach(w => { wallsMap[w.id] = w })
+        
         elements.rooms = recognitionResult.rooms.map((room, index) => {
-          const polygon = room.boundary?.map(point => ({
-            x: point.x,
-            z: point.y
-          })) || []
+          let polygon = []
+          
+          // Если есть boundary - используем его
+          if (room.boundary && room.boundary.length > 0) {
+            polygon = room.boundary.map(point => ({
+              x: point.x,
+              z: point.y
+            }))
+          }
+          // Иначе вычисляем из стен
+          else if (room.wall_ids && room.wall_ids.length > 0) {
+            const points = []
+            room.wall_ids.forEach(wallId => {
+              const wall = wallsMap[wallId]
+              if (wall) {
+                points.push({ x: wall.start.x, z: wall.start.z })
+                points.push({ x: wall.end.x, z: wall.end.z })
+              }
+            })
+            
+            if (points.length > 0) {
+              const centerX = points.reduce((s, p) => s + p.x, 0) / points.length
+              const centerZ = points.reduce((s, p) => s + p.z, 0) / points.length
+              
+              // Удаляем дубликаты и сортируем по углу
+              const unique = []
+              points.forEach(p => {
+                if (!unique.some(u => Math.abs(u.x - p.x) < 0.1 && Math.abs(u.z - p.z) < 0.1)) {
+                  unique.push(p)
+                }
+              })
+              
+              unique.sort((a, b) => {
+                return Math.atan2(a.z - centerZ, a.x - centerX) - Math.atan2(b.z - centerZ, b.x - centerX)
+              })
+              
+              polygon = unique
+            }
+          }
+          // Если ничего нет - создаём примерный полигон по площади
+          else if (room.area) {
+            const side = Math.sqrt(room.area)
+            const offsetX = index * (side + 1)
+            polygon = [
+              { x: offsetX, z: 0 },
+              { x: offsetX + side, z: 0 },
+              { x: offsetX + side, z: side },
+              { x: offsetX, z: side }
+            ]
+          }
+          
+          // Определяем название и тип
+          let roomName = room.name
+          let roomType = roomTypeMap[room.type] || 'living'
+          
+          if (!roomName || room.type === 'unknown') {
+            if (room.is_wet_zone) {
+              roomName = room.area > 6 ? 'Ванная комната' : 'Санузел'
+              roomType = room.area > 6 ? 'bathroom' : 'combined'
+            } else if (room.area > 20) {
+              roomName = 'Гостиная'
+              roomType = 'living'
+            } else if (room.area > 12) {
+              roomName = 'Спальня'
+              roomType = 'bedroom'
+            } else if (room.area > 8) {
+              roomName = 'Кухня'
+              roomType = 'kitchen'
+            } else {
+              roomName = `Комната ${index + 1}`
+            }
+          }
           
           return {
             id: room.temp_id || `room_${index}`,
             type: 'room',
-            name: room.name || `Комната ${index + 1}`,
-            room_type: roomTypeMap[room.type] || 'living',
+            name: roomName,
+            room_type: roomType,
             polygon: polygon,
             area: room.area || 0,
             perimeter: 0,
+            wall_ids: room.wall_ids || [],
             properties: {
               has_wet_zone: room.is_wet_zone || false,
               has_ventilation: false,

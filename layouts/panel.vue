@@ -211,7 +211,7 @@ function closeSidebar() {
                     </ul>
                 </nav>
             </div>
-            <div class="mt-7 p-3 flex">
+            <div class="mt-auto p-3 flex">
                 <NuxtLink to="/panel/profile"
                     class="group w-full flex items-center gap-3 px-4 py-2 rounded-full font-medium transition-all border-l-4 border-transparent"
                     :class="route.path === '/panel/profile' ? 'bg-[#2563EB] text-white' : 'hover:bg-[#27272A] text-[#717177]'"
@@ -225,9 +225,9 @@ function closeSidebar() {
             </div>
         </div>
     </div>
-    <div class="w-full min-h-screen  p-2   lg:ps-65 flex flex-col">
-        <div class="bg-[#18181B] flex-1 rounded-4xl flex flex-col border border-[#26272A]">
-            <div class="p-4 md:p-6">
+    <div class="w-full min-h-screen p-2 sm:p-3 lg:ps-65 flex flex-col">
+        <div class="bg-[#18181B] flex-1 rounded-2xl sm:rounded-3xl lg:rounded-4xl flex flex-col border border-[#26272A]">
+            <div class="p-3 sm:p-4 md:p-6">
                 <slot />
             </div>
         </div>

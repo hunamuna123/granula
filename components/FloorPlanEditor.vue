@@ -1662,11 +1662,15 @@ onMounted(() => {
   }
 
   initializeScene()
-  createApartment()
+  // НЕ вызываем createApartment() - ждём данные от API через loadSceneElements()
+  // Создаём пустую сцену вместо дефолтной квартиры
+  createEmptyScene()
   setupControls()
   setupEventHandlers()
   startAnimation()
-  initRooms()
+  // initRooms() - комнаты будут загружены из API
+  
+  console.log('🎮 FloorPlanEditor mounted and ready for data')
   
   // Даем фокус контейнеру для работы горячих клавиш
   setTimeout(() => {
@@ -3268,66 +3272,130 @@ function convertRecognitionToScene(recognitionResult) {
     utilities: []
   }
   
+  // Создаём карту стен для быстрого доступа
+  const wallsMap = {}
+  
   // Конвертируем стены
   if (recognitionResult.walls) {
-    elements.walls = recognitionResult.walls.map((wall, index) => ({
-      id: wall.temp_id || `wall_${index}`,
-      type: 'wall',
-      name: wall.is_load_bearing ? 'Несущая стена' : 'Перегородка',
-      start: { x: wall.start?.x || 0, y: 0, z: wall.start?.y || 0 },
-      end: { x: wall.end?.x || 0, y: 0, z: wall.end?.y || 0 },
-      height: 3.0,
-      thickness: wall.thickness || 0.2,
-      properties: {
-        is_load_bearing: wall.is_load_bearing || false,
-        material: wall.material || 'unknown',
-        can_demolish: !wall.is_load_bearing,
-        confidence: wall.confidence || 0
-      },
-      openings: [],
-      metadata: {
-        locked: wall.is_load_bearing,
-        visible: true,
-        selected: false
+    elements.walls = recognitionResult.walls.map((wall, index) => {
+      const wallData = {
+        id: wall.temp_id || `wall_${index}`,
+        type: 'wall',
+        name: wall.is_load_bearing ? 'Несущая стена' : 'Перегородка',
+        // API возвращает координаты в 2D (x, y), конвертируем в 3D (x, 0, z)
+        start: { x: wall.start?.x || 0, y: 0, z: wall.start?.y || 0 },
+        end: { x: wall.end?.x || 0, y: 0, z: wall.end?.y || 0 },
+        height: 3.0,
+        thickness: wall.thickness || 0.2,
+        properties: {
+          is_load_bearing: wall.is_load_bearing || false,
+          material: wall.material || 'unknown',
+          can_demolish: !wall.is_load_bearing,
+          confidence: wall.confidence || 0
+        },
+        openings: [],
+        metadata: {
+          locked: wall.is_load_bearing,
+          visible: true,
+          selected: false
+        }
       }
-    }))
+      
+      // Сохраняем в карту для вычисления границ комнат
+      wallsMap[wallData.id] = wallData
+      
+      return wallData
+    })
+  }
+  
+  // Определяем тип комнаты
+  const roomTypeMap = {
+    'LIVING': 'living',
+    'BEDROOM': 'bedroom',
+    'CHILDREN': 'bedroom',
+    'OFFICE': 'living',
+    'KITCHEN': 'kitchen',
+    'KITCHEN_LIVING': 'kitchenGas',
+    'BATHROOM': 'bathroom',
+    'TOILET': 'toilet',
+    'COMBINED_BATHROOM': 'combined',
+    'HALLWAY': 'hallway',
+    'STORAGE': 'storage',
+    'LAUNDRY': 'combined',
+    'BALCONY': 'balcony',
+    'LOGGIA': 'loggia',
+    'unknown': 'living'
   }
   
   // Конвертируем комнаты
   if (recognitionResult.rooms) {
     elements.rooms = recognitionResult.rooms.map((room, index) => {
-      // Конвертируем boundary 2D (x,y) в polygon (x,z)
-      const polygon = room.boundary?.map(point => ({
-        x: point.x,
-        z: point.y
-      })) || []
+      let polygon = []
+      
+      // Если есть boundary - используем его
+      if (room.boundary && room.boundary.length > 0) {
+        polygon = room.boundary.map(point => ({
+          x: point.x,
+          z: point.y
+        }))
+      } 
+      // Иначе вычисляем полигон из стен
+      else if (room.wall_ids && room.wall_ids.length > 0) {
+        polygon = calculateRoomPolygonFromWalls(room.wall_ids, wallsMap)
+      }
+      // Если ни того ни другого - создаём примерный полигон по площади
+      else if (room.area) {
+        const side = Math.sqrt(room.area)
+        const offsetX = index * (side + 1)
+        polygon = [
+          { x: offsetX, z: 0 },
+          { x: offsetX + side, z: 0 },
+          { x: offsetX + side, z: side },
+          { x: offsetX, z: side }
+        ]
+      }
+      
+      // Определяем название комнаты
+      let roomName = room.name
+      if (!roomName) {
+        if (room.is_wet_zone) {
+          roomName = room.area > 6 ? 'Ванная комната' : 'Санузел'
+        } else if (room.area > 20) {
+          roomName = 'Гостиная'
+        } else if (room.area > 12) {
+          roomName = 'Спальня'
+        } else if (room.area > 8) {
+          roomName = 'Кухня'
+        } else {
+          roomName = `Комната ${index + 1}`
+        }
+      }
       
       // Определяем тип комнаты
-      const roomTypeMap = {
-        'LIVING': 'living',
-        'BEDROOM': 'bedroom',
-        'CHILDREN': 'bedroom',
-        'OFFICE': 'living',
-        'KITCHEN': 'kitchen',
-        'KITCHEN_LIVING': 'kitchenGas',
-        'BATHROOM': 'bathroom',
-        'TOILET': 'toilet',
-        'COMBINED_BATHROOM': 'combined',
-        'HALLWAY': 'hallway',
-        'STORAGE': 'storage',
-        'LAUNDRY': 'combined',
-        'BALCONY': 'balcony',
-        'LOGGIA': 'loggia'
+      let roomType = roomTypeMap[room.type] || 'living'
+      if (room.type === 'unknown') {
+        if (room.is_wet_zone) {
+          roomType = room.area > 6 ? 'bathroom' : 'combined'
+        } else if (room.area > 20) {
+          roomType = 'living'
+        } else if (room.area > 12) {
+          roomType = 'bedroom'
+        } else if (room.area > 6 && room.area <= 12) {
+          roomType = 'kitchen'
+        } else {
+          roomType = 'hallway'
+        }
       }
       
       return {
         id: room.temp_id || `room_${index}`,
         type: 'room',
-        name: room.name || `Комната ${index + 1}`,
-        room_type: roomTypeMap[room.type] || 'living',
+        name: roomName,
+        room_type: roomType,
         polygon: polygon,
         area: room.area || 0,
         perimeter: 0,
+        wall_ids: room.wall_ids || [],
         properties: {
           has_wet_zone: room.is_wet_zone || false,
           has_ventilation: false,
@@ -3342,12 +3410,30 @@ function convertRecognitionToScene(recognitionResult) {
   // Конвертируем проёмы (двери/окна)
   if (recognitionResult.openings) {
     recognitionResult.openings.forEach((opening, index) => {
+      // Находим стену для позиционирования проёма
+      const wall = wallsMap[opening.wall_id]
+      let position = { x: opening.position?.x || 0, y: 0, z: opening.position?.y || 0 }
+      
+      // Если есть стена - вычисляем реальную позицию проёма на стене
+      if (wall && opening.position?.x !== undefined) {
+        const wallLength = Math.sqrt(
+          Math.pow(wall.end.x - wall.start.x, 2) + 
+          Math.pow(wall.end.z - wall.start.z, 2)
+        )
+        const ratio = Math.min(opening.position.x / wallLength, 1)
+        position = {
+          x: wall.start.x + (wall.end.x - wall.start.x) * ratio,
+          y: 0,
+          z: wall.start.z + (wall.end.z - wall.start.z) * ratio
+        }
+      }
+      
       const openingData = {
         id: opening.temp_id || `opening_${index}`,
-        type: opening.type === 'door' ? 'door' : 'window',
-        position: { x: opening.position?.x || 0, y: 0, z: opening.position?.y || 0 },
+        type: opening.type === 'door' ? 'door' : (opening.type === 'window' ? 'window' : 'door'),
+        position: position,
         width: opening.width || 0.9,
-        height: opening.height || 2.1,
+        height: opening.type === 'window' ? 1.4 : 2.1,
         wall_id: opening.wall_id,
         properties: {
           opens_to: opening.opens_to,
@@ -3399,6 +3485,49 @@ function convertRecognitionToScene(recognitionResult) {
   return elements
 }
 
+// Вычисление полигона комнаты из списка стен
+function calculateRoomPolygonFromWalls(wallIds, wallsMap) {
+  if (!wallIds || wallIds.length === 0) return []
+  
+  // Собираем все точки стен
+  const points = []
+  
+  wallIds.forEach(wallId => {
+    const wall = wallsMap[wallId]
+    if (wall) {
+      // Добавляем начальную и конечную точки стены
+      points.push({ x: wall.start.x, z: wall.start.z })
+      points.push({ x: wall.end.x, z: wall.end.z })
+    }
+  })
+  
+  if (points.length === 0) return []
+  
+  // Находим центр всех точек
+  const centerX = points.reduce((sum, p) => sum + p.x, 0) / points.length
+  const centerZ = points.reduce((sum, p) => sum + p.z, 0) / points.length
+  
+  // Удаляем дубликаты точек (с допуском 0.1м)
+  const uniquePoints = []
+  points.forEach(point => {
+    const isDuplicate = uniquePoints.some(up => 
+      Math.abs(up.x - point.x) < 0.1 && Math.abs(up.z - point.z) < 0.1
+    )
+    if (!isDuplicate) {
+      uniquePoints.push(point)
+    }
+  })
+  
+  // Сортируем точки по углу относительно центра (для построения полигона)
+  uniquePoints.sort((a, b) => {
+    const angleA = Math.atan2(a.z - centerZ, a.x - centerX)
+    const angleB = Math.atan2(b.z - centerZ, b.x - centerX)
+    return angleA - angleB
+  })
+  
+  return uniquePoints
+}
+
 // Загрузка элементов сцены из API данных
 function loadSceneElements(sceneData, recognitionResult = null) {
   // Очищаем текущую сцену
@@ -3411,84 +3540,27 @@ function loadSceneElements(sceneData, recognitionResult = null) {
     elements = convertRecognitionToScene(recognitionResult)
   }
   
+  // Если recognition result внутри sceneData (от polling status)
+  if (!elements && sceneData?.result) {
+    elements = convertRecognitionToScene(sceneData.result)
+  }
+  
   if (!elements) {
     // Если нет данных, создаём пустую сцену
     createEmptyScene()
     return
   }
   
+  console.log('🏗️ Loading scene elements:', elements)
+  
   // Создаём группу для квартиры
   apartmentGroup = new THREE.Group()
   
-  // Вычисляем границы из комнат
+  // Вычисляем границы из стен (более надёжно чем из комнат)
   let minX = Infinity, maxX = -Infinity
   let minZ = Infinity, maxZ = -Infinity
   
-  // Загружаем комнаты
-  if (elements.rooms && elements.rooms.length > 0) {
-    rooms.value = []
-    
-    elements.rooms.forEach(room => {
-      // Вычисляем bounds из polygon
-      let roomMinX = Infinity, roomMaxX = -Infinity
-      let roomMinZ = Infinity, roomMaxZ = -Infinity
-      
-      if (room.polygon && room.polygon.length > 0) {
-        room.polygon.forEach(point => {
-          roomMinX = Math.min(roomMinX, point.x)
-          roomMaxX = Math.max(roomMaxX, point.x)
-          roomMinZ = Math.min(roomMinZ, point.z)
-          roomMaxZ = Math.max(roomMaxZ, point.z)
-        })
-      }
-      
-      const centerX = (roomMinX + roomMaxX) / 2
-      const centerZ = (roomMinZ + roomMaxZ) / 2
-      const width = roomMaxX - roomMinX
-      const depth = roomMaxZ - roomMinZ
-      
-      minX = Math.min(minX, roomMinX)
-      maxX = Math.max(maxX, roomMaxX)
-      minZ = Math.min(minZ, roomMinZ)
-      maxZ = Math.max(maxZ, roomMaxZ)
-      
-      // Определяем цвет по типу комнаты
-      const roomType = roomTypes[room.room_type] || roomTypes.living
-      
-      const roomData = {
-        id: room.id,
-        name: room.name,
-        type: room.room_type || 'living',
-        x: centerX,
-        z: centerZ,
-        width: width,
-        depth: depth,
-        color: roomType.color,
-        hasWindow: room.properties?.has_window || false,
-        hasGas: room.room_type === 'kitchenGas',
-        area: room.area || (width * depth)
-      }
-      
-      // Создаём 3D представление комнаты
-      const roomGroup = createRoomWithBorder(roomData)
-      apartmentGroup.add(roomGroup)
-      
-      // Добавляем в массив комнат
-      rooms.value.push({
-        id: room.id,
-        type: room.room_type || 'living',
-        name: room.name,
-        area: room.area || (width * depth),
-        hasWindow: room.properties?.has_window || false,
-        hasGas: room.room_type === 'kitchenGas',
-        floor: roomGroup,
-        walls: [],
-        bounds: { minX: roomMinX, maxX: roomMaxX, minZ: roomMinZ, maxZ: roomMaxZ }
-      })
-    })
-  }
-  
-  // Загружаем стены
+  // Сначала загружаем стены и вычисляем границы
   if (elements.walls && elements.walls.length > 0) {
     elements.walls.forEach(wall => {
       const startX = wall.start?.x || 0
@@ -3496,7 +3568,15 @@ function loadSceneElements(sceneData, recognitionResult = null) {
       const endX = wall.end?.x || 0
       const endZ = wall.end?.z || 0
       
+      // Обновляем границы
+      minX = Math.min(minX, startX, endX)
+      maxX = Math.max(maxX, startX, endX)
+      minZ = Math.min(minZ, startZ, endZ)
+      maxZ = Math.max(maxZ, startZ, endZ)
+      
       const length = Math.sqrt(Math.pow(endX - startX, 2) + Math.pow(endZ - startZ, 2))
+      if (length < 0.1) return // Пропускаем слишком короткие стены
+      
       const centerX = (startX + endX) / 2
       const centerZ = (startZ + endZ) / 2
       const angle = Math.atan2(endZ - startZ, endX - startX)
@@ -3506,7 +3586,8 @@ function loadSceneElements(sceneData, recognitionResult = null) {
       const isLoadBearing = wall.properties?.is_load_bearing || false
       
       const material = new THREE.MeshStandardMaterial({ 
-        color: isLoadBearing ? 0x6b7280 : 0x9ca3af
+        color: isLoadBearing ? 0x6b7280 : 0xa0aec0,
+        roughness: 0.8
       })
       
       const wallMesh = createWall(
@@ -3532,15 +3613,95 @@ function loadSceneElements(sceneData, recognitionResult = null) {
     })
   }
   
+  // Загружаем комнаты
+  if (elements.rooms && elements.rooms.length > 0) {
+    rooms.value = []
+    
+    elements.rooms.forEach((room, index) => {
+      // Вычисляем bounds из polygon
+      let roomMinX = Infinity, roomMaxX = -Infinity
+      let roomMinZ = Infinity, roomMaxZ = -Infinity
+      
+      if (room.polygon && room.polygon.length > 0) {
+        room.polygon.forEach(point => {
+          roomMinX = Math.min(roomMinX, point.x)
+          roomMaxX = Math.max(roomMaxX, point.x)
+          roomMinZ = Math.min(roomMinZ, point.z)
+          roomMaxZ = Math.max(roomMaxZ, point.z)
+        })
+      } else {
+        // Если нет полигона - используем площадь для примерного размера
+        const side = Math.sqrt(room.area || 10)
+        const offsetX = (index % 3) * (side + 1)
+        const offsetZ = Math.floor(index / 3) * (side + 1)
+        roomMinX = offsetX
+        roomMaxX = offsetX + side
+        roomMinZ = offsetZ
+        roomMaxZ = offsetZ + side
+      }
+      
+      // Проверяем валидность размеров
+      if (roomMinX === Infinity || roomMaxX === -Infinity) return
+      
+      const centerX = (roomMinX + roomMaxX) / 2
+      const centerZ = (roomMinZ + roomMaxZ) / 2
+      const width = Math.max(roomMaxX - roomMinX, 1)
+      const depth = Math.max(roomMaxZ - roomMinZ, 1)
+      
+      // Обновляем общие границы
+      minX = Math.min(minX, roomMinX)
+      maxX = Math.max(maxX, roomMaxX)
+      minZ = Math.min(minZ, roomMinZ)
+      maxZ = Math.max(maxZ, roomMaxZ)
+      
+      // Определяем цвет по типу комнаты
+      const roomTypeData = roomTypes[room.room_type] || roomTypes.living
+      
+      const roomData = {
+        id: room.id,
+        name: room.name,
+        type: room.room_type || 'living',
+        x: centerX,
+        z: centerZ,
+        width: width,
+        depth: depth,
+        color: roomTypeData.color,
+        hasWindow: room.properties?.has_window || false,
+        hasGas: room.room_type === 'kitchenGas',
+        area: room.area || (width * depth)
+      }
+      
+      // Создаём 3D представление комнаты
+      const roomGroup = createRoomWithBorder(roomData)
+      apartmentGroup.add(roomGroup)
+      
+      // Добавляем в массив комнат для UI
+      rooms.value.push({
+        id: room.id,
+        type: room.room_type || 'living',
+        name: room.name,
+        area: room.area || (width * depth),
+        hasWindow: room.properties?.has_window || false,
+        hasGas: room.room_type === 'kitchenGas',
+        floor: roomGroup,
+        walls: room.wall_ids || [],
+        bounds: { minX: roomMinX, maxX: roomMaxX, minZ: roomMinZ, maxZ: roomMaxZ }
+      })
+    })
+  }
+  
   // Загружаем проёмы (двери и окна)
   if (elements.openings && elements.openings.length > 0) {
     elements.openings.forEach(opening => {
-      const pos = [opening.position?.x || 0, opening.height / 2 || 1, opening.position?.z || 0]
+      const posX = opening.position?.x || 0
+      const posZ = opening.position?.z || 0
+      const width = opening.width || 0.9
+      const height = opening.height || (opening.type === 'window' ? 1.4 : 2.1)
       
       if (opening.type === 'door') {
-        addDoor(pos, opening.width || 0.9, opening.height || 2.1, opening.name || 'Дверь', 0x8b7355)
+        addDoor([posX, height / 2, posZ], width, height, opening.name || 'Дверь', 0x8b7355)
       } else if (opening.type === 'window') {
-        addWindow(pos, opening.width || 1.5, opening.height || 1.4, opening.name || 'Окно')
+        addWindow([posX, 1.5, posZ], width, height, opening.name || 'Окно')
       }
     })
   }
@@ -3559,7 +3720,7 @@ function loadSceneElements(sceneData, recognitionResult = null) {
     })
   }
   
-  // Загружаем инженерные элементы как специальные объекты
+  // Загружаем инженерные элементы
   if (elements.utilities && elements.utilities.length > 0) {
     elements.utilities.forEach(utility => {
       const pos = [utility.position?.x || 0, 0.5, utility.position?.z || 0]
@@ -3577,16 +3738,37 @@ function loadSceneElements(sceneData, recognitionResult = null) {
   }
   
   // Устанавливаем границы квартиры
-  if (minX !== Infinity) {
+  if (minX !== Infinity && maxX !== -Infinity) {
     apartmentBounds = {
-      minX: minX - 0.5,
-      maxX: maxX + 0.5,
-      minZ: minZ - 0.5,
-      maxZ: maxZ + 0.5
+      minX: minX - 1,
+      maxX: maxX + 1,
+      minZ: minZ - 1,
+      maxZ: maxZ + 1
+    }
+    
+    // Центрируем камеру на квартире
+    const centerX = (minX + maxX) / 2
+    const centerZ = (minZ + maxZ) / 2
+    const size = Math.max(maxX - minX, maxZ - minZ)
+    
+    if (camera) {
+      camera.position.set(centerX + size, size * 0.8, centerZ + size)
+      camera.lookAt(centerX, 0, centerZ)
+    }
+    
+    if (controls) {
+      controls.target.set(centerX, 0, centerZ)
+      controls.update()
     }
   }
   
   scene.add(apartmentGroup)
+  
+  console.log('✅ Scene loaded:', {
+    walls: elements.walls?.length || 0,
+    rooms: elements.rooms?.length || 0,
+    openings: elements.openings?.length || 0
+  })
 }
 
 // Очистка сцены

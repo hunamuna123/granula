@@ -389,6 +389,8 @@ function formatTime(date) {
 async function loadFloorPlan() {
   try {
     loading.value = true
+    
+    // Загружаем данные floor plan
     const result = await $fetch(`${apiStore.url}api/v1/floor-plans/${planId}`, {
       method: 'GET',
       headers: {
@@ -403,10 +405,35 @@ async function loadFloorPlan() {
     editPlanName.value = planName.value
     editPlanDescription.value = planDescription.value
     
-    // Загружаем сцену если есть workspace_id
-    if (workspaceId.value) {
+    console.log('📋 Floor plan loaded:', floorPlan.value)
+    
+    // Сначала проверяем localStorage на наличие recognition result
+    try {
+      const savedRecognition = localStorage.getItem(`recognition_${planId}`)
+      if (savedRecognition) {
+        recognitionResult.value = JSON.parse(savedRecognition)
+        console.log('📦 Recognition result from localStorage:', recognitionResult.value)
+        
+        // Применяем к редактору
+        applyRecognitionResult(recognitionResult.value)
+        
+        // Очищаем localStorage
+        localStorage.removeItem(`recognition_${planId}`)
+        return
+      }
+    } catch (e) {
+      console.warn('Could not load recognition from localStorage:', e)
+    }
+    
+    // Пробуем загрузить сцену
+    const savedSceneId = localStorage.getItem(`scene_${planId}`)
+    if (savedSceneId) {
+      await loadSceneById(savedSceneId)
+      localStorage.removeItem(`scene_${planId}`)
+    } else if (workspaceId.value) {
       await loadScene()
     }
+    
   } catch (error) {
     console.error('Ошибка загрузки планировки:', error)
     planName.value = `Планировка #${planId}`
@@ -416,62 +443,79 @@ async function loadFloorPlan() {
   }
 }
 
+// Загрузка сцены по ID (GET /scenes/{id})
+async function loadSceneById(sceneId) {
+  try {
+    console.log('🎮 Loading scene by ID:', sceneId)
+    
+    const sceneDetails = await $fetch(`${apiStore.url}api/v1/scenes/${sceneId}`, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${accessToken.value}`,
+        'Content-Type': 'application/json'
+      }
+    })
+    
+    scene.value = sceneDetails.data || sceneDetails
+    console.log('✅ Scene loaded:', scene.value)
+    
+    // Если сцена имеет elements - применяем
+    if (scene.value.elements) {
+      if (scene.value.elements.rooms) {
+        roomsCount.value = scene.value.elements.rooms.length
+        totalArea.value = scene.value.elements.rooms.reduce((sum, room) => sum + (room.area || 0), 0)
+      }
+      
+      setTimeout(() => {
+        if (editor.value?.loadSceneElements) {
+          editor.value.loadSceneElements(scene.value, null)
+        }
+      }, 500)
+    } else {
+      // Сцена без elements - загружаем recognition
+      await loadRecognitionResult()
+    }
+  } catch (error) {
+    console.error('Ошибка загрузки сцены по ID:', error)
+    await loadRecognitionResult()
+  }
+}
+
 // Загрузка сцены из API
 async function loadScene() {
   try {
     sceneLoading.value = true
+    console.log('🔍 Looking for scenes in workspace:', workspaceId.value)
     
-    // Пробуем загрузить сцену по floor_plan_id
+    // Получаем список сцен воркспейса
     const scenesResult = await $fetch(`${apiStore.url}api/v1/workspaces/${workspaceId.value}/scenes`, {
       method: 'GET',
       headers: {
         'Authorization': `Bearer ${accessToken.value}`,
         'Content-Type': 'application/json'
-      },
-      query: {
-        floor_plan_id: planId
       }
     })
     
-    const scenes = scenesResult.data || scenesResult.scenes || scenesResult
+    // API может вернуть разные форматы
+    let scenes = scenesResult.data?.items || scenesResult.data?.scenes || scenesResult.data || scenesResult.scenes || scenesResult
+    if (!Array.isArray(scenes)) scenes = []
     
-    if (Array.isArray(scenes) && scenes.length > 0) {
-      // Берём первую сцену для этого floor plan
-      scene.value = scenes[0]
+    console.log('📋 Found scenes:', scenes.length)
+    
+    // Ищем сцену для этого floor_plan
+    const matchingScene = scenes.find(s => s.floor_plan_id === planId)
+    
+    if (matchingScene) {
+      console.log('✅ Found matching scene:', matchingScene.id)
       
-      // Загружаем полную информацию о сцене с элементами
-      const sceneDetails = await $fetch(`${apiStore.url}api/v1/workspaces/${workspaceId.value}/scenes/${scene.value.id}`, {
-        method: 'GET',
-        headers: {
-          'Authorization': `Bearer ${accessToken.value}`,
-          'Content-Type': 'application/json'
-        }
-      })
-      
-      scene.value = sceneDetails.data || sceneDetails
-      
-      // Обновляем площадь и количество комнат из сцены
-      if (scene.value.elements?.rooms) {
-        roomsCount.value = scene.value.elements.rooms.length
-        totalArea.value = scene.value.elements.rooms.reduce((sum, room) => sum + (room.area || 0), 0)
-      }
-      
-      // Передаём данные в редактор
-      if (editor.value && scene.value.elements) {
-        // Даём редактору время инициализироваться
-        setTimeout(() => {
-          if (editor.value?.loadSceneElements) {
-            editor.value.loadSceneElements(scene.value, recognitionResult.value)
-          }
-        }, 500)
-      }
+      // Загружаем полную информацию через GET /scenes/{id}
+      await loadSceneById(matchingScene.id)
     } else {
-      // Сцены нет - пробуем загрузить результат распознавания
+      console.log('⚠️ No scene found for floor plan, loading recognition...')
       await loadRecognitionResult()
     }
   } catch (error) {
     console.error('Ошибка загрузки сцены:', error)
-    // Если сцена не найдена - пробуем загрузить recognition result
     await loadRecognitionResult()
   } finally {
     sceneLoading.value = false
@@ -480,9 +524,13 @@ async function loadScene() {
 
 // Загрузка результата распознавания
 async function loadRecognitionResult() {
+  console.log('🤖 Loading recognition result...')
+  
   try {
-    // Пробуем получить recognition result из floor plan
+    // Способ 1: Если есть recognition_job_id у floor plan
     if (floorPlan.value?.recognition_job_id) {
+      console.log('📡 Fetching recognition by job_id:', floorPlan.value.recognition_job_id)
+      
       const recognizeResult = await $fetch(`${apiStore.url}api/v1/ai/recognize/${floorPlan.value.recognition_job_id}/status`, {
         method: 'GET',
         headers: {
@@ -492,28 +540,103 @@ async function loadRecognitionResult() {
       })
       
       const data = recognizeResult.data || recognizeResult
+      console.log('📦 Recognition status:', data?.status)
       
       if (data?.status === 'completed' && data?.result) {
         recognitionResult.value = data.result
-        
-        // Обновляем площадь и количество комнат
-        if (data.result.rooms) {
-          roomsCount.value = data.result.rooms.length
-          totalArea.value = data.result.rooms.reduce((sum, room) => sum + (room.area || 0), 0)
-        }
-        
-        // Передаём в редактор
-        if (editor.value) {
-          setTimeout(() => {
-            if (editor.value?.loadSceneElements) {
-              editor.value.loadSceneElements(null, recognitionResult.value)
-            }
-          }, 500)
-        }
+        console.log('✅ Recognition result loaded:', {
+          walls: data.result.walls?.length || 0,
+          rooms: data.result.rooms?.length || 0,
+          openings: data.result.openings?.length || 0
+        })
+        applyRecognitionResult(data.result)
+        return
       }
     }
+    
+    // Способ 2: Пробуем получить статус распознавания через floor plan endpoint
+    try {
+      console.log('📡 Trying floor-plans recognition-status endpoint...')
+      
+      const statusResult = await $fetch(`${apiStore.url}api/v1/floor-plans/${planId}/recognition-status`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${accessToken.value}`,
+          'Content-Type': 'application/json'
+        }
+      })
+      
+      const data = statusResult.data || statusResult
+      
+      if (data?.status === 'completed' && data?.result) {
+        recognitionResult.value = data.result
+        console.log('✅ Recognition result from floor-plan endpoint')
+        applyRecognitionResult(data.result)
+        return
+      }
+    } catch (e) {
+      console.log('⚠️ Recognition status endpoint not available')
+    }
+    
+    console.log('ℹ️ No recognition result available, using default scene')
+    
   } catch (error) {
     console.error('Ошибка загрузки результата распознавания:', error)
+  }
+}
+
+// Применение результата распознавания к 3D редактору
+function applyRecognitionResult(result) {
+  if (!result) {
+    console.warn('⚠️ No recognition result to apply')
+    return
+  }
+  
+  console.log('🎨 Applying recognition result to 3D editor:', {
+    walls: result.walls?.length || 0,
+    rooms: result.rooms?.length || 0,
+    openings: result.openings?.length || 0,
+    total_area: result.total_area
+  })
+  
+  // Обновляем площадь и количество комнат
+  if (result.rooms) {
+    roomsCount.value = result.rooms.length
+    totalArea.value = result.rooms.reduce((sum, room) => sum + (room.area || 0), 0)
+  }
+  
+  // Если есть total_area в результате - используем его
+  if (result.total_area) {
+    totalArea.value = result.total_area
+  }
+  
+  // Функция для передачи данных в редактор
+  const passToEditor = () => {
+    if (editor.value?.loadSceneElements) {
+      console.log('🚀 Passing data to FloorPlanEditor.loadSceneElements()')
+      editor.value.loadSceneElements(null, result)
+      return true
+    }
+    return false
+  }
+  
+  // Пробуем сразу передать в редактор
+  if (!passToEditor()) {
+    // Если редактор ещё не готов - ждём с несколькими попытками
+    let attempts = 0
+    const maxAttempts = 10
+    
+    const interval = setInterval(() => {
+      attempts++
+      console.log(`⏳ Waiting for editor... attempt ${attempts}/${maxAttempts}`)
+      
+      if (passToEditor() || attempts >= maxAttempts) {
+        clearInterval(interval)
+        if (attempts >= maxAttempts) {
+          console.warn('⚠️ Editor not ready after max attempts')
+        }
+      }
+    }, 500)
   }
 }
 

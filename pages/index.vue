@@ -89,64 +89,64 @@ const submitServiceRequest = () => {
     <HeaderNavbar />
     
     <!-- Hero Section with 3D Model -->
-    <section class="relative pt-32 pb-20 px-4 sm:px-6 lg:px-8 overflow-hidden">
+    <section class="relative pt-20 sm:pt-24 md:pt-32 pb-12 sm:pb-16 md:pb-20 px-4 sm:px-6 lg:px-8 overflow-hidden">
       <div class="max-w-7xl mx-auto">
-        <div class="grid lg:grid-cols-2 gap-12 items-center">
-          <div class="space-y-8">
-            <div class="space-y-4">
-              <h1 class="text-5xl lg:text-6xl font-bold text-white leading-tight">
+        <div class="grid lg:grid-cols-2 gap-8 md:gap-12 items-center">
+          <div class="space-y-6 sm:space-y-8">
+            <div class="space-y-3 sm:space-y-4">
+              <h1 class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-tight">
                 Превратите план квартиры в
                 <span class="text-[#2563EB]">3D модель</span>
                 для законной перепланировки
               </h1>
-              <p class="text-xl text-gray-400 leading-relaxed">
+              <p class="text-base sm:text-lg md:text-xl text-gray-400 leading-relaxed">
                 Цифровой сервис с ИИ, который автоматически распознает план, создает 3D модель и проверяет перепланировку на соответствие нормам
               </p>
             </div>
             
-            <div class="flex flex-col sm:flex-row gap-4">
+            <div class="flex flex-col sm:flex-row gap-3 sm:gap-4">
               <Button 
                 label="Начать бесплатно" 
                 size="large"
-                class="bg-[#2563EB] hover:bg-[#1D4ED8] border-none text-white px-8 py-6 text-lg rounded-xl"
+                class="bg-[#2563EB] hover:bg-[#1D4ED8] border-none text-white px-6 sm:px-8 py-4 sm:py-6 text-base sm:text-lg rounded-xl w-full sm:w-auto"
                 @click="() => {}"
               />
               <Button 
                 label="Посмотреть демо" 
                 size="large"
                 outlined
-                class="border-[#26272A] text-white hover:bg-[#18181B] px-8 py-6 text-lg rounded-xl"
+                class="border-[#26272A] text-white hover:bg-[#18181B] px-6 sm:px-8 py-4 sm:py-6 text-base sm:text-lg rounded-xl w-full sm:w-auto"
                 @click="() => {}"
               />
             </div>
 
-            <div class="flex items-center gap-6 pt-4">
+            <div class="flex flex-wrap items-center gap-4 sm:gap-6 pt-2 sm:pt-4">
               <div class="flex items-center gap-2">
-                <div class="w-5 h-5 rounded-full bg-green-500/20 flex items-center justify-center">
-                  <div class="w-2 h-2 rounded-full bg-green-500"></div>
+                <div class="w-4 h-4 sm:w-5 sm:h-5 rounded-full bg-green-500/20 flex items-center justify-center">
+                  <div class="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-green-500"></div>
                 </div>
-                <span class="text-gray-400">Бесплатно для всех</span>
+                <span class="text-gray-400 text-sm sm:text-base">Бесплатно для всех</span>
               </div>
               <div class="flex items-center gap-2">
-                <div class="w-5 h-5 rounded-full bg-green-500/20 flex items-center justify-center">
-                  <div class="w-2 h-2 rounded-full bg-green-500"></div>
+                <div class="w-4 h-4 sm:w-5 sm:h-5 rounded-full bg-green-500/20 flex items-center justify-center">
+                  <div class="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-green-500"></div>
                 </div>
-                <span class="text-gray-400">Проверка норм</span>
+                <span class="text-gray-400 text-sm sm:text-base">Проверка норм</span>
               </div>
             </div>
           </div>
           
           <!-- 3D Model Preview -->
-          <div class="relative">
-            <div class="bg-gradient-to-br from-[#2563EB]/20 to-[#1D4ED8]/10 rounded-4xl p-8 backdrop-blur-sm border border-[#26272A] shadow-2xl">
-              <div class="bg-[#18181B] rounded-2xl p-6 space-y-4 border border-[#26272A]">
-                <div class="h-96 bg-gradient-to-br from-[#09090B] to-[#18181B] rounded-xl overflow-hidden relative border border-[#26272A] flex items-center justify-center">
-                  <div class="text-center space-y-4">
-                    <div class="w-24 h-24 bg-[#2563EB]/20 rounded-3xl flex items-center justify-center mx-auto animate-pulse">
-                      <i class="pi pi-cube text-5xl text-[#2563EB]"></i>
+          <div class="relative mt-8 lg:mt-0">
+            <div class="bg-gradient-to-br from-[#2563EB]/20 to-[#1D4ED8]/10 rounded-2xl sm:rounded-3xl lg:rounded-4xl p-4 sm:p-6 lg:p-8 backdrop-blur-sm border border-[#26272A] shadow-2xl">
+              <div class="bg-[#18181B] rounded-xl sm:rounded-2xl p-4 sm:p-6 space-y-4 border border-[#26272A]">
+                <div class="h-48 sm:h-64 md:h-80 lg:h-96 bg-gradient-to-br from-[#09090B] to-[#18181B] rounded-lg sm:rounded-xl overflow-hidden relative border border-[#26272A] flex items-center justify-center">
+                  <div class="text-center space-y-3 sm:space-y-4">
+                    <div class="w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 bg-[#2563EB]/20 rounded-2xl sm:rounded-3xl flex items-center justify-center mx-auto animate-pulse">
+                      <i class="pi pi-cube text-3xl sm:text-4xl md:text-5xl text-[#2563EB]"></i>
                     </div>
-                    <p class="text-white font-medium">3D модель квартиры</p>
-                    <p class="text-gray-500 text-sm">Интерактивная визуализация</p>
+                    <p class="text-white font-medium text-sm sm:text-base">3D модель квартиры</p>
+                    <p class="text-gray-500 text-xs sm:text-sm">Интерактивная визуализация</p>
                   </div>
                 </div>
               </div>
@@ -157,17 +157,17 @@ const submitServiceRequest = () => {
     </section>
 
     <!-- 3D Constructor Preview -->
-    <section class="py-20 px-4 sm:px-6 lg:px-8 bg-[#18181B]/50">
+    <section class="py-12 sm:py-16 md:py-20 px-4 sm:px-6 lg:px-8 bg-[#18181B]/50">
       <div class="max-w-7xl mx-auto">
-        <div class="text-center mb-12">
-          <h2 class="text-4xl font-bold text-white mb-4">Конструктор планировки</h2>
-          <p class="text-xl text-gray-400">Создавайте и редактируйте планировку в реальном времени</p>
+        <div class="text-center mb-8 sm:mb-12">
+          <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-3 sm:mb-4">Конструктор планировки</h2>
+          <p class="text-base sm:text-lg md:text-xl text-gray-400">Создавайте и редактируйте планировку в реальном времени</p>
         </div>
 
-        <div class="grid lg:grid-cols-2 gap-8 items-center">
-          <div class="space-y-6">
-            <div class="bg-[#18181B] rounded-4xl p-8 border border-[#26272A]">
-              <h3 class="text-2xl font-bold text-white mb-4">Возможности редактора</h3>
+        <div class="grid lg:grid-cols-2 gap-6 sm:gap-8 items-center">
+          <div class="space-y-4 sm:space-y-6 order-2 lg:order-1">
+            <div class="bg-[#18181B] rounded-2xl sm:rounded-3xl lg:rounded-4xl p-5 sm:p-6 lg:p-8 border border-[#26272A]">
+              <h3 class="text-xl sm:text-2xl font-bold text-white mb-3 sm:mb-4">Возможности редактора</h3>
               <ul class="space-y-3">
                 <li class="flex items-start gap-3">
                   <div class="w-6 h-6 rounded-lg bg-[#2563EB]/20 flex items-center justify-center flex-shrink-0 mt-0.5">
@@ -211,21 +211,21 @@ const submitServiceRequest = () => {
             <Button 
               label="Открыть конструктор" 
               size="large"
-              class="w-full bg-[#2563EB] hover:bg-[#1D4ED8] border-none text-white py-6 text-lg rounded-xl"
+              class="w-full bg-[#2563EB] hover:bg-[#1D4ED8] border-none text-white py-4 sm:py-6 text-base sm:text-lg rounded-xl"
               @click="() => {}"
             />
           </div>
 
-          <div class="relative">
-            <div class="bg-gradient-to-br from-[#2563EB]/20 to-[#1D4ED8]/10 rounded-4xl p-8 backdrop-blur-sm border border-[#26272A]">
-              <div class="bg-[#18181B] rounded-2xl p-6 space-y-4">
-                <div class="h-96 bg-[#09090B] rounded-xl overflow-hidden relative border border-[#26272A] flex items-center justify-center">
-                  <div class="text-center space-y-4">
-                    <div class="w-20 h-20 bg-[#2563EB]/20 rounded-2xl flex items-center justify-center mx-auto">
-                      <i class="pi pi-cube text-4xl text-[#2563EB]"></i>
+          <div class="relative order-1 lg:order-2">
+            <div class="bg-gradient-to-br from-[#2563EB]/20 to-[#1D4ED8]/10 rounded-2xl sm:rounded-3xl lg:rounded-4xl p-4 sm:p-6 lg:p-8 backdrop-blur-sm border border-[#26272A]">
+              <div class="bg-[#18181B] rounded-xl sm:rounded-2xl p-4 sm:p-6 space-y-4">
+                <div class="h-48 sm:h-64 md:h-80 lg:h-96 bg-[#09090B] rounded-lg sm:rounded-xl overflow-hidden relative border border-[#26272A] flex items-center justify-center">
+                  <div class="text-center space-y-3 sm:space-y-4">
+                    <div class="w-14 h-14 sm:w-16 sm:h-16 md:w-20 md:h-20 bg-[#2563EB]/20 rounded-xl sm:rounded-2xl flex items-center justify-center mx-auto">
+                      <i class="pi pi-cube text-2xl sm:text-3xl md:text-4xl text-[#2563EB]"></i>
                     </div>
-                    <p class="text-gray-400">3D конструктор планировки</p>
-                    <p class="text-gray-500 text-sm">Интерактивный редактор с перетаскиванием элементов</p>
+                    <p class="text-gray-400 text-sm sm:text-base">3D конструктор планировки</p>
+                    <p class="text-gray-500 text-xs sm:text-sm px-4">Интерактивный редактор с перетаскиванием элементов</p>
                   </div>
                 </div>
               </div>
@@ -236,44 +236,44 @@ const submitServiceRequest = () => {
     </section>
 
     <!-- How It Works -->
-    <section class="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-[#09090B] to-[#18181B]/30">
+    <section class="py-12 sm:py-16 md:py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-[#09090B] to-[#18181B]/30">
       <div class="max-w-7xl mx-auto">
-        <div class="text-center mb-16">
-          <h2 class="text-4xl lg:text-5xl font-bold text-white mb-4">Как это работает</h2>
-          <p class="text-xl text-gray-400">Простой процесс от загрузки плана до готового проекта</p>
+        <div class="text-center mb-10 sm:mb-12 md:mb-16">
+          <h2 class="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-3 sm:mb-4">Как это работает</h2>
+          <p class="text-base sm:text-lg md:text-xl text-gray-400">Простой процесс от загрузки плана до готового проекта</p>
         </div>
 
-        <div class="grid md:grid-cols-3 gap-8">
-          <div class="bg-[#18181B] border border-[#26272A] rounded-4xl p-8 hover:border-[#2563EB]/50 transition-all duration-300 hover:shadow-xl hover:shadow-[#2563EB]/10">
-            <div class="text-center space-y-4">
-              <div class="w-20 h-20 bg-gradient-to-br from-[#2563EB]/30 to-[#1D4ED8]/20 rounded-3xl flex items-center justify-center mx-auto mb-4">
-                <IconsNetwork class="w-10 h-10 text-[#2563EB]" />
+        <div class="grid sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6 md:gap-8">
+          <div class="bg-[#18181B] border border-[#26272A] rounded-2xl sm:rounded-3xl lg:rounded-4xl p-5 sm:p-6 lg:p-8 hover:border-[#2563EB]/50 transition-all duration-300 hover:shadow-xl hover:shadow-[#2563EB]/10">
+            <div class="text-center space-y-3 sm:space-y-4">
+              <div class="w-14 h-14 sm:w-16 sm:h-16 md:w-20 md:h-20 bg-gradient-to-br from-[#2563EB]/30 to-[#1D4ED8]/20 rounded-2xl sm:rounded-3xl flex items-center justify-center mx-auto mb-3 sm:mb-4">
+                <IconsNetwork class="w-7 h-7 sm:w-8 sm:h-8 md:w-10 md:h-10 text-[#2563EB]" />
               </div>
-              <div class="w-8 h-8 rounded-full bg-[#2563EB] text-white flex items-center justify-center mx-auto font-bold">1</div>
-              <h3 class="text-2xl font-bold text-white mt-4">Загрузите план</h3>
-              <p class="text-gray-400 leading-relaxed">Фото техпаспорта, скан чертежа или план квартиры</p>
+              <div class="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-[#2563EB] text-white flex items-center justify-center mx-auto font-bold text-sm sm:text-base">1</div>
+              <h3 class="text-lg sm:text-xl md:text-2xl font-bold text-white mt-3 sm:mt-4">Загрузите план</h3>
+              <p class="text-gray-400 text-sm sm:text-base leading-relaxed">Фото техпаспорта, скан чертежа или план квартиры</p>
             </div>
           </div>
 
-          <div class="bg-[#18181B] border border-[#26272A] rounded-4xl p-8 hover:border-[#2563EB]/50 transition-all duration-300 hover:shadow-xl hover:shadow-[#2563EB]/10">
-            <div class="text-center space-y-4">
-              <div class="w-20 h-20 bg-gradient-to-br from-[#2563EB]/30 to-[#1D4ED8]/20 rounded-3xl flex items-center justify-center mx-auto mb-4">
-                <IconsSpeed class="w-10 h-10 text-[#2563EB]" />
+          <div class="bg-[#18181B] border border-[#26272A] rounded-2xl sm:rounded-3xl lg:rounded-4xl p-5 sm:p-6 lg:p-8 hover:border-[#2563EB]/50 transition-all duration-300 hover:shadow-xl hover:shadow-[#2563EB]/10">
+            <div class="text-center space-y-3 sm:space-y-4">
+              <div class="w-14 h-14 sm:w-16 sm:h-16 md:w-20 md:h-20 bg-gradient-to-br from-[#2563EB]/30 to-[#1D4ED8]/20 rounded-2xl sm:rounded-3xl flex items-center justify-center mx-auto mb-3 sm:mb-4">
+                <IconsSpeed class="w-7 h-7 sm:w-8 sm:h-8 md:w-10 md:h-10 text-[#2563EB]" />
               </div>
-              <div class="w-8 h-8 rounded-full bg-[#2563EB] text-white flex items-center justify-center mx-auto font-bold">2</div>
-              <h3 class="text-2xl font-bold text-white mt-4">ИИ распознает</h3>
-              <p class="text-gray-400 leading-relaxed">Автоматически определяет стены, двери, окна, помещения и размеры</p>
+              <div class="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-[#2563EB] text-white flex items-center justify-center mx-auto font-bold text-sm sm:text-base">2</div>
+              <h3 class="text-lg sm:text-xl md:text-2xl font-bold text-white mt-3 sm:mt-4">ИИ распознает</h3>
+              <p class="text-gray-400 text-sm sm:text-base leading-relaxed">Автоматически определяет стены, двери, окна, помещения и размеры</p>
             </div>
           </div>
 
-          <div class="bg-[#18181B] border border-[#26272A] rounded-4xl p-8 hover:border-[#2563EB]/50 transition-all duration-300 hover:shadow-xl hover:shadow-[#2563EB]/10">
-            <div class="text-center space-y-4">
-              <div class="w-20 h-20 bg-gradient-to-br from-[#2563EB]/30 to-[#1D4ED8]/20 rounded-3xl flex items-center justify-center mx-auto mb-4">
-                <IconsEdit class="w-10 h-10 text-[#2563EB]" />
+          <div class="bg-[#18181B] border border-[#26272A] rounded-2xl sm:rounded-3xl lg:rounded-4xl p-5 sm:p-6 lg:p-8 hover:border-[#2563EB]/50 transition-all duration-300 hover:shadow-xl hover:shadow-[#2563EB]/10 sm:col-span-2 md:col-span-1">
+            <div class="text-center space-y-3 sm:space-y-4">
+              <div class="w-14 h-14 sm:w-16 sm:h-16 md:w-20 md:h-20 bg-gradient-to-br from-[#2563EB]/30 to-[#1D4ED8]/20 rounded-2xl sm:rounded-3xl flex items-center justify-center mx-auto mb-3 sm:mb-4">
+                <IconsEdit class="w-7 h-7 sm:w-8 sm:h-8 md:w-10 md:h-10 text-[#2563EB]" />
               </div>
-              <div class="w-8 h-8 rounded-full bg-[#2563EB] text-white flex items-center justify-center mx-auto font-bold">3</div>
-              <h3 class="text-2xl font-bold text-white mt-4">Редактируйте</h3>
-              <p class="text-gray-400 leading-relaxed">Создавайте перепланировку с автоматической проверкой норм</p>
+              <div class="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-[#2563EB] text-white flex items-center justify-center mx-auto font-bold text-sm sm:text-base">3</div>
+              <h3 class="text-lg sm:text-xl md:text-2xl font-bold text-white mt-3 sm:mt-4">Редактируйте</h3>
+              <p class="text-gray-400 text-sm sm:text-base leading-relaxed">Создавайте перепланировку с автоматической проверкой норм</p>
             </div>
           </div>
         </div>
@@ -281,27 +281,27 @@ const submitServiceRequest = () => {
     </section>
 
     <!-- Features Section -->
-    <section class="py-20 px-4 sm:px-6 lg:px-8">
+    <section class="py-12 sm:py-16 md:py-20 px-4 sm:px-6 lg:px-8">
       <div class="max-w-7xl mx-auto">
-        <div class="text-center mb-16">
-          <h2 class="text-4xl lg:text-5xl font-bold text-white mb-4">Возможности редактора</h2>
-          <p class="text-xl text-gray-400">Все инструменты для создания идеальной планировки</p>
+        <div class="text-center mb-10 sm:mb-12 md:mb-16">
+          <h2 class="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-3 sm:mb-4">Возможности редактора</h2>
+          <p class="text-base sm:text-lg md:text-xl text-gray-400">Все инструменты для создания идеальной планировки</p>
         </div>
 
-        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 md:gap-6">
           <div v-for="feature in features" :key="feature.title" 
-               class="bg-[#18181B] border border-[#26272A] rounded-4xl p-6 hover:border-[#2563EB]/50 transition-all duration-300 hover:shadow-xl hover:shadow-[#2563EB]/10 group">
-            <div class="space-y-4">
-              <div class="w-14 h-14 bg-gradient-to-br from-[#2563EB]/30 to-[#1D4ED8]/20 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform">
-                <IconsNetwork v-if="feature.icon === 'Network'" class="w-7 h-7 text-[#2563EB]" />
-                <IconsHome v-else-if="feature.icon === 'Home'" class="w-7 h-7 text-[#2563EB]" />
-                <IconsEdit v-else-if="feature.icon === 'Edit'" class="w-7 h-7 text-[#2563EB]" />
-                <IconsSupport v-else-if="feature.icon === 'Support'" class="w-7 h-7 text-[#2563EB]" />
-                <IconsSettings v-else-if="feature.icon === 'Settings'" class="w-7 h-7 text-[#2563EB]" />
-                <IconsSpeed v-else-if="feature.icon === 'Speed'" class="w-7 h-7 text-[#2563EB]" />
+               class="bg-[#18181B] border border-[#26272A] rounded-2xl sm:rounded-3xl lg:rounded-4xl p-4 sm:p-5 md:p-6 hover:border-[#2563EB]/50 transition-all duration-300 hover:shadow-xl hover:shadow-[#2563EB]/10 group">
+            <div class="space-y-3 sm:space-y-4">
+              <div class="w-11 h-11 sm:w-12 sm:h-12 md:w-14 md:h-14 bg-gradient-to-br from-[#2563EB]/30 to-[#1D4ED8]/20 rounded-xl sm:rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform">
+                <IconsNetwork v-if="feature.icon === 'Network'" class="w-5 h-5 sm:w-6 sm:h-6 md:w-7 md:h-7 text-[#2563EB]" />
+                <IconsHome v-else-if="feature.icon === 'Home'" class="w-5 h-5 sm:w-6 sm:h-6 md:w-7 md:h-7 text-[#2563EB]" />
+                <IconsEdit v-else-if="feature.icon === 'Edit'" class="w-5 h-5 sm:w-6 sm:h-6 md:w-7 md:h-7 text-[#2563EB]" />
+                <IconsSupport v-else-if="feature.icon === 'Support'" class="w-5 h-5 sm:w-6 sm:h-6 md:w-7 md:h-7 text-[#2563EB]" />
+                <IconsSettings v-else-if="feature.icon === 'Settings'" class="w-5 h-5 sm:w-6 sm:h-6 md:w-7 md:h-7 text-[#2563EB]" />
+                <IconsSpeed v-else-if="feature.icon === 'Speed'" class="w-5 h-5 sm:w-6 sm:h-6 md:w-7 md:h-7 text-[#2563EB]" />
               </div>
-              <h3 class="text-xl font-bold text-white">{{ feature.title }}</h3>
-              <p class="text-gray-400 leading-relaxed">{{ feature.description }}</p>
+              <h3 class="text-base sm:text-lg md:text-xl font-bold text-white">{{ feature.title }}</h3>
+              <p class="text-gray-400 text-sm sm:text-base leading-relaxed">{{ feature.description }}</p>
             </div>
           </div>
         </div>
@@ -309,64 +309,64 @@ const submitServiceRequest = () => {
     </section>
 
     <!-- Norms Check Section -->
-    <section class="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-[#18181B]/50 to-[#09090B]">
+    <section class="py-12 sm:py-16 md:py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-[#18181B]/50 to-[#09090B]">
       <div class="max-w-7xl mx-auto">
-        <div class="grid lg:grid-cols-2 gap-12 items-center">
-          <div class="space-y-8">
+        <div class="grid lg:grid-cols-2 gap-8 md:gap-12 items-center">
+          <div class="space-y-6 sm:space-y-8">
             <div>
-              <h2 class="text-4xl lg:text-5xl font-bold text-white mb-6">Модуль проверки норм</h2>
-              <p class="text-xl text-gray-400 leading-relaxed">
+              <h2 class="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-4 sm:mb-6">Модуль проверки норм</h2>
+              <p class="text-base sm:text-lg md:text-xl text-gray-400 leading-relaxed">
                 Автоматическая проверка соответствия СНиП, Жилищного кодекса РФ и других нормативов при каждом действии
               </p>
             </div>
             
-            <div class="space-y-4">
-              <div class="flex items-start gap-4 p-5 bg-[#18181B] rounded-2xl border border-red-500/30 hover:border-red-500/50 transition-colors">
-                <div class="w-12 h-12 rounded-xl bg-red-500/20 flex items-center justify-center flex-shrink-0">
-                  <i class="pi pi-times text-red-400 text-xl"></i>
+            <div class="space-y-3 sm:space-y-4">
+              <div class="flex items-start gap-3 sm:gap-4 p-4 sm:p-5 bg-[#18181B] rounded-xl sm:rounded-2xl border border-red-500/30 hover:border-red-500/50 transition-colors">
+                <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-lg sm:rounded-xl bg-red-500/20 flex items-center justify-center flex-shrink-0">
+                  <i class="pi pi-times text-red-400 text-lg sm:text-xl"></i>
                 </div>
                 <div>
-                  <p class="text-white font-bold text-lg mb-1">Запрещено</p>
-                  <p class="text-gray-400">Снос несущей стены</p>
+                  <p class="text-white font-bold text-base sm:text-lg mb-0.5 sm:mb-1">Запрещено</p>
+                  <p class="text-gray-400 text-sm sm:text-base">Снос несущей стены</p>
                 </div>
               </div>
               
-              <div class="flex items-start gap-4 p-5 bg-[#18181B] rounded-2xl border border-yellow-500/30 hover:border-yellow-500/50 transition-colors">
-                <div class="w-12 h-12 rounded-xl bg-yellow-500/20 flex items-center justify-center flex-shrink-0">
-                  <i class="pi pi-exclamation-triangle text-yellow-400 text-xl"></i>
+              <div class="flex items-start gap-3 sm:gap-4 p-4 sm:p-5 bg-[#18181B] rounded-xl sm:rounded-2xl border border-yellow-500/30 hover:border-yellow-500/50 transition-colors">
+                <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-lg sm:rounded-xl bg-yellow-500/20 flex items-center justify-center flex-shrink-0">
+                  <i class="pi pi-exclamation-triangle text-yellow-400 text-lg sm:text-xl"></i>
                 </div>
                 <div>
-                  <p class="text-white font-bold text-lg mb-1">Сомнительно</p>
-                  <p class="text-gray-400">Проход стал меньше 70 см</p>
+                  <p class="text-white font-bold text-base sm:text-lg mb-0.5 sm:mb-1">Сомнительно</p>
+                  <p class="text-gray-400 text-sm sm:text-base">Проход стал меньше 70 см</p>
                 </div>
               </div>
               
-              <div class="flex items-start gap-4 p-5 bg-[#18181B] rounded-2xl border border-green-500/30 hover:border-green-500/50 transition-colors">
-                <div class="w-12 h-12 rounded-xl bg-green-500/20 flex items-center justify-center flex-shrink-0">
-                  <i class="pi pi-check text-green-400 text-xl"></i>
+              <div class="flex items-start gap-3 sm:gap-4 p-4 sm:p-5 bg-[#18181B] rounded-xl sm:rounded-2xl border border-green-500/30 hover:border-green-500/50 transition-colors">
+                <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-lg sm:rounded-xl bg-green-500/20 flex items-center justify-center flex-shrink-0">
+                  <i class="pi pi-check text-green-400 text-lg sm:text-xl"></i>
                 </div>
                 <div>
-                  <p class="text-white font-bold text-lg mb-1">Разрешено</p>
-                  <p class="text-gray-400">Действие соответствует нормам</p>
+                  <p class="text-white font-bold text-base sm:text-lg mb-0.5 sm:mb-1">Разрешено</p>
+                  <p class="text-gray-400 text-sm sm:text-base">Действие соответствует нормам</p>
                 </div>
               </div>
             </div>
           </div>
           
-          <div class="bg-gradient-to-br from-[#18181B] to-[#09090B] rounded-4xl p-8 border border-[#26272A] shadow-2xl">
-            <h3 class="text-2xl font-bold text-white mb-6">Примеры проверки</h3>
-            <div class="space-y-4">
-              <div class="flex items-center justify-between p-5 bg-[#09090B] rounded-xl border border-[#26272A] hover:border-[#2563EB]/30 transition-colors">
-                <span class="text-gray-300 font-medium">Объединение кухни и гостиной</span>
-                <Badge value="Проверка..." severity="info" />
+          <div class="bg-gradient-to-br from-[#18181B] to-[#09090B] rounded-2xl sm:rounded-3xl lg:rounded-4xl p-5 sm:p-6 lg:p-8 border border-[#26272A] shadow-2xl mt-6 lg:mt-0">
+            <h3 class="text-xl sm:text-2xl font-bold text-white mb-4 sm:mb-6">Примеры проверки</h3>
+            <div class="space-y-3 sm:space-y-4">
+              <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between p-4 sm:p-5 bg-[#09090B] rounded-lg sm:rounded-xl border border-[#26272A] hover:border-[#2563EB]/30 transition-colors gap-2 sm:gap-4">
+                <span class="text-gray-300 font-medium text-sm sm:text-base">Объединение кухни и гостиной</span>
+                <Badge value="Проверка..." severity="info" class="self-start sm:self-center" />
               </div>
-              <div class="flex items-center justify-between p-5 bg-[#09090B] rounded-xl border border-[#26272A] hover:border-green-500/30 transition-colors">
-                <span class="text-gray-300 font-medium">Снос перегородки</span>
-                <Badge value="OK" severity="success" />
+              <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between p-4 sm:p-5 bg-[#09090B] rounded-lg sm:rounded-xl border border-[#26272A] hover:border-green-500/30 transition-colors gap-2 sm:gap-4">
+                <span class="text-gray-300 font-medium text-sm sm:text-base">Снос перегородки</span>
+                <Badge value="OK" severity="success" class="self-start sm:self-center" />
               </div>
-              <div class="flex items-center justify-between p-5 bg-[#09090B] rounded-xl border border-[#26272A] hover:border-yellow-500/30 transition-colors">
-                <span class="text-gray-300 font-medium">Установка перегородки</span>
-                <Badge value="Предупреждение" severity="warn" />
+              <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between p-4 sm:p-5 bg-[#09090B] rounded-lg sm:rounded-xl border border-[#26272A] hover:border-yellow-500/30 transition-colors gap-2 sm:gap-4">
+                <span class="text-gray-300 font-medium text-sm sm:text-base">Установка перегородки</span>
+                <Badge value="Предупреждение" severity="warn" class="self-start sm:self-center" />
               </div>
             </div>
           </div>
@@ -375,30 +375,30 @@ const submitServiceRequest = () => {
     </section>
 
     <!-- PRO Features -->
-    <section class="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-[#09090B] to-[#18181B]/30">
+    <section class="py-12 sm:py-16 md:py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-[#09090B] to-[#18181B]/30">
       <div class="max-w-7xl mx-auto">
-        <div class="text-center mb-16">
-          <Badge value="PRO" severity="info" class="mb-6 text-base px-4 py-2" />
-          <h2 class="text-4xl lg:text-5xl font-bold text-white mb-4">Расширенные возможности</h2>
-          <p class="text-xl text-gray-400">PRO функции для профессионалов и тех, кто хочет больше</p>
+        <div class="text-center mb-10 sm:mb-12 md:mb-16">
+          <Badge value="PRO" severity="info" class="mb-4 sm:mb-6 text-sm sm:text-base px-3 sm:px-4 py-1.5 sm:py-2" />
+          <h2 class="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-3 sm:mb-4">Расширенные возможности</h2>
+          <p class="text-base sm:text-lg md:text-xl text-gray-400">PRO функции для профессионалов и тех, кто хочет больше</p>
         </div>
 
-        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
           <div v-for="(feature, index) in proFeatures" :key="index" 
-               class="p-5 bg-[#18181B] rounded-2xl border border-[#26272A] flex items-start gap-3 hover:border-[#2563EB]/50 hover:bg-[#18181B]/80 transition-all duration-300">
-            <div class="w-8 h-8 rounded-lg bg-[#2563EB]/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-              <IconsSpeed class="w-5 h-5 text-[#2563EB]" />
+               class="p-4 sm:p-5 bg-[#18181B] rounded-xl sm:rounded-2xl border border-[#26272A] flex items-start gap-2 sm:gap-3 hover:border-[#2563EB]/50 hover:bg-[#18181B]/80 transition-all duration-300">
+            <div class="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-[#2563EB]/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+              <IconsSpeed class="w-4 h-4 sm:w-5 sm:h-5 text-[#2563EB]" />
             </div>
-            <span class="text-gray-300 leading-relaxed">{{ feature }}</span>
+            <span class="text-gray-300 text-sm sm:text-base leading-relaxed">{{ feature }}</span>
           </div>
         </div>
 
-        <div class="text-center mt-12">
+        <div class="text-center mt-8 sm:mt-10 md:mt-12">
           <Button 
             label="Узнать больше о PRO" 
             size="large"
             outlined
-            class="border-[#2563EB] text-[#2563EB] hover:bg-[#2563EB]/10 px-8 py-6 text-lg rounded-xl"
+            class="border-[#2563EB] text-[#2563EB] hover:bg-[#2563EB]/10 px-6 sm:px-8 py-4 sm:py-6 text-base sm:text-lg rounded-xl w-full sm:w-auto"
             @click="() => {}"
           />
         </div>
@@ -406,74 +406,74 @@ const submitServiceRequest = () => {
     </section>
 
     <!-- Additional Features -->
-    <section class="py-20 px-4 sm:px-6 lg:px-8">
+    <section class="py-12 sm:py-16 md:py-20 px-4 sm:px-6 lg:px-8">
       <div class="max-w-7xl mx-auto">
-        <div class="text-center mb-16">
-          <h2 class="text-4xl lg:text-5xl font-bold text-white mb-4">Дополнительные функции</h2>
-          <p class="text-xl text-gray-400">Все что нужно для комфортной работы</p>
+        <div class="text-center mb-10 sm:mb-12 md:mb-16">
+          <h2 class="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-3 sm:mb-4">Дополнительные функции</h2>
+          <p class="text-base sm:text-lg md:text-xl text-gray-400">Все что нужно для комфортной работы</p>
         </div>
 
-        <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
           <div v-for="(feature, index) in additionalFeatures" :key="index" 
-               class="p-6 bg-[#18181B] rounded-2xl border border-[#26272A] text-center hover:border-[#2563EB]/50 hover:shadow-lg hover:shadow-[#2563EB]/10 transition-all duration-300">
-            <div class="w-12 h-12 bg-gradient-to-br from-[#2563EB]/30 to-[#1D4ED8]/20 rounded-xl flex items-center justify-center mx-auto mb-3">
-              <IconsSupport class="w-6 h-6 text-[#2563EB]" />
+               class="p-4 sm:p-5 md:p-6 bg-[#18181B] rounded-xl sm:rounded-2xl border border-[#26272A] text-center hover:border-[#2563EB]/50 hover:shadow-lg hover:shadow-[#2563EB]/10 transition-all duration-300">
+            <div class="w-10 h-10 sm:w-11 sm:h-11 md:w-12 md:h-12 bg-gradient-to-br from-[#2563EB]/30 to-[#1D4ED8]/20 rounded-lg sm:rounded-xl flex items-center justify-center mx-auto mb-2 sm:mb-3">
+              <IconsSupport class="w-5 h-5 sm:w-5.5 sm:h-5.5 md:w-6 md:h-6 text-[#2563EB]" />
             </div>
-            <p class="text-gray-300 text-sm leading-relaxed">{{ feature }}</p>
+            <p class="text-gray-300 text-xs sm:text-sm leading-relaxed">{{ feature }}</p>
           </div>
         </div>
       </div>
     </section>
 
     <!-- BTI Services -->
-    <section class="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-[#18181B]/50 to-[#09090B]">
+    <section class="py-12 sm:py-16 md:py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-[#18181B]/50 to-[#09090B]">
       <div class="max-w-4xl mx-auto">
-        <div class="bg-gradient-to-br from-[#18181B] to-[#09090B] border border-[#26272A] rounded-4xl p-8 shadow-2xl">
-          <div class="text-center mb-8">
-            <h2 class="text-3xl lg:text-4xl font-bold text-white mb-3">Оформить заявку на услуги БТИ</h2>
-            <p class="text-gray-400 text-lg">После создания проекта мы поможем официально согласовать перепланировку</p>
+        <div class="bg-gradient-to-br from-[#18181B] to-[#09090B] border border-[#26272A] rounded-2xl sm:rounded-3xl lg:rounded-4xl p-5 sm:p-6 lg:p-8 shadow-2xl">
+          <div class="text-center mb-6 sm:mb-8">
+            <h2 class="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold text-white mb-2 sm:mb-3">Оформить заявку на услуги БТИ</h2>
+            <p class="text-gray-400 text-sm sm:text-base md:text-lg">После создания проекта мы поможем официально согласовать перепланировку</p>
           </div>
           
-          <div class="space-y-6">
+          <div class="space-y-4 sm:space-y-6">
             <div>
-              <label class="block text-white mb-4 font-semibold text-lg">Тип услуги:</label>
-              <div class="space-y-3">
+              <label class="block text-white mb-3 sm:mb-4 font-semibold text-base sm:text-lg">Тип услуги:</label>
+              <div class="space-y-2 sm:space-y-3">
                 <div v-for="service in services" :key="service.value" 
-                     class="flex items-center gap-4 p-5 bg-[#09090B] rounded-2xl border cursor-pointer transition-all duration-300 hover:scale-[1.02]"
+                     class="flex items-center gap-3 sm:gap-4 p-3 sm:p-4 md:p-5 bg-[#09090B] rounded-xl sm:rounded-2xl border cursor-pointer transition-all duration-300 hover:scale-[1.01] sm:hover:scale-[1.02]"
                      :class="selectedService === service.value ? 'border-[#2563EB] bg-[#2563EB]/10 shadow-lg shadow-[#2563EB]/20' : 'border-[#26272A] hover:border-[#2563EB]/50'"
                      @click="selectedService = service.value">
-                  <div class="w-6 h-6 rounded-full border-2 flex items-center justify-center flex-shrink-0"
+                  <div class="w-5 h-5 sm:w-6 sm:h-6 rounded-full border-2 flex items-center justify-center flex-shrink-0"
                        :class="selectedService === service.value ? 'border-[#2563EB]' : 'border-[#26272A]'">
-                    <div v-if="selectedService === service.value" class="w-3.5 h-3.5 rounded-full bg-[#2563EB]"></div>
+                    <div v-if="selectedService === service.value" class="w-2.5 h-2.5 sm:w-3.5 sm:h-3.5 rounded-full bg-[#2563EB]"></div>
                   </div>
-                  <div class="flex-1 cursor-pointer">
-                    <div class="flex justify-between items-center">
-                      <span class="text-white font-medium">{{ service.label }}</span>
-                      <span class="text-[#2563EB] font-bold">{{ service.price }}</span>
+                  <div class="flex-1 cursor-pointer min-w-0">
+                    <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-0.5 sm:gap-2">
+                      <span class="text-white font-medium text-sm sm:text-base truncate">{{ service.label }}</span>
+                      <span class="text-[#2563EB] font-bold text-sm sm:text-base">{{ service.price }}</span>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
 
-            <div class="grid md:grid-cols-3 gap-4">
+            <div class="grid sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4">
               <div>
-                <label class="block text-gray-400 mb-2 text-sm font-medium">Имя</label>
-                <InputText v-model="serviceForm.name" placeholder="Ваше имя" class="w-full bg-[#09090B] border-[#26272A] text-white rounded-xl" />
+                <label class="block text-gray-400 mb-1.5 sm:mb-2 text-xs sm:text-sm font-medium">Имя</label>
+                <InputText v-model="serviceForm.name" placeholder="Ваше имя" class="w-full bg-[#09090B] border-[#26272A] text-white rounded-lg sm:rounded-xl text-sm" />
               </div>
               <div>
-                <label class="block text-gray-400 mb-2 text-sm font-medium">Телефон</label>
-                <InputText v-model="serviceForm.phone" placeholder="+7 (___) ___-__-__" class="w-full bg-[#09090B] border-[#26272A] text-white rounded-xl" />
+                <label class="block text-gray-400 mb-1.5 sm:mb-2 text-xs sm:text-sm font-medium">Телефон</label>
+                <InputText v-model="serviceForm.phone" placeholder="+7 (___) ___-__-__" class="w-full bg-[#09090B] border-[#26272A] text-white rounded-lg sm:rounded-xl text-sm" />
               </div>
-              <div>
-                <label class="block text-gray-400 mb-2 text-sm font-medium">Email</label>
-                <InputText v-model="serviceForm.email" placeholder="email@example.com" class="w-full bg-[#09090B] border-[#26272A] text-white rounded-xl" />
+              <div class="sm:col-span-2 md:col-span-1">
+                <label class="block text-gray-400 mb-1.5 sm:mb-2 text-xs sm:text-sm font-medium">Email</label>
+                <InputText v-model="serviceForm.email" placeholder="email@example.com" class="w-full bg-[#09090B] border-[#26272A] text-white rounded-lg sm:rounded-xl text-sm" />
               </div>
             </div>
 
             <Button 
               label="Отправить заявку" 
-              class="w-full bg-[#2563EB] hover:bg-[#1D4ED8] border-none text-white py-6 text-lg rounded-xl shadow-lg"
+              class="w-full bg-[#2563EB] hover:bg-[#1D4ED8] border-none text-white py-4 sm:py-5 md:py-6 text-base sm:text-lg rounded-xl shadow-lg"
               @click="submitServiceRequest"
             />
           </div>
@@ -482,26 +482,26 @@ const submitServiceRequest = () => {
     </section>
 
     <!-- CTA Section -->
-    <section class="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-[#2563EB]/20 to-[#1D4ED8]/10 rounded-4xl mx-4 sm:mx-6 lg:mx-8">
-      <div class="max-w-4xl mx-auto text-center space-y-8">
-        <h2 class="text-4xl lg:text-5xl font-bold text-white">
+    <section class="py-12 sm:py-16 md:py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-[#2563EB]/20 to-[#1D4ED8]/10 rounded-2xl sm:rounded-3xl lg:rounded-4xl mx-3 sm:mx-4 md:mx-6 lg:mx-8">
+      <div class="max-w-4xl mx-auto text-center space-y-5 sm:space-y-6 md:space-y-8">
+        <h2 class="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-white px-2">
           Начните создавать идеальную планировку уже сегодня
         </h2>
-        <p class="text-xl text-gray-400">
+        <p class="text-base sm:text-lg md:text-xl text-gray-400 px-4">
           Бесплатно для всех. Никаких ограничений. Платите только за то, что вам нужно.
         </p>
-        <div class="flex flex-col sm:flex-row gap-4 justify-center">
+        <div class="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center">
           <Button 
             label="Создать проект бесплатно" 
             size="large"
-            class="bg-[#2563EB] hover:bg-[#1D4ED8] border-none text-white px-8 py-6 text-lg rounded-xl"
+            class="bg-[#2563EB] hover:bg-[#1D4ED8] border-none text-white px-6 sm:px-8 py-4 sm:py-6 text-base sm:text-lg rounded-xl w-full sm:w-auto"
             @click="() => {}"
           />
           <Button 
             label="Связаться с нами" 
             size="large"
             outlined
-            class="border-[#26272A] text-white hover:bg-[#18181B] px-8 py-6 text-lg rounded-xl"
+            class="border-[#26272A] text-white hover:bg-[#18181B] px-6 sm:px-8 py-4 sm:py-6 text-base sm:text-lg rounded-xl w-full sm:w-auto"
             @click="() => {}"
           />
         </div>
@@ -509,39 +509,39 @@ const submitServiceRequest = () => {
     </section>
 
     <!-- Footer -->
-    <footer class="py-12 px-4 sm:px-6 lg:px-8 border-t border-[#26272A] bg-[#09090B]">
+    <footer class="py-8 sm:py-10 md:py-12 px-4 sm:px-6 lg:px-8 border-t border-[#26272A] bg-[#09090B]">
       <div class="max-w-7xl mx-auto">
-        <div class="grid md:grid-cols-4 gap-8">
-          <div>
-            <IconsLogo class="h-8 w-auto fill-current text-white mb-4" />
-            <p class="text-gray-400 text-sm">Цифровой сервис для создания и проверки перепланировок квартир</p>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-6 sm:gap-8">
+          <div class="col-span-2 md:col-span-1">
+            <IconsLogo class="h-6 sm:h-8 w-auto fill-current text-white mb-3 sm:mb-4" />
+            <p class="text-gray-400 text-xs sm:text-sm">Цифровой сервис для создания и проверки перепланировок квартир</p>
           </div>
           <div>
-            <h4 class="text-white font-semibold mb-4">Продукт</h4>
-            <ul class="space-y-2 text-gray-400 text-sm">
+            <h4 class="text-white font-semibold mb-3 sm:mb-4 text-sm sm:text-base">Продукт</h4>
+            <ul class="space-y-1.5 sm:space-y-2 text-gray-400 text-xs sm:text-sm">
               <li><a href="#" class="hover:text-white transition-colors">Возможности</a></li>
               <li><a href="#" class="hover:text-white transition-colors">PRO версия</a></li>
               <li><a href="#" class="hover:text-white transition-colors">Цены</a></li>
             </ul>
           </div>
           <div>
-            <h4 class="text-white font-semibold mb-4">Компания</h4>
-            <ul class="space-y-2 text-gray-400 text-sm">
+            <h4 class="text-white font-semibold mb-3 sm:mb-4 text-sm sm:text-base">Компания</h4>
+            <ul class="space-y-1.5 sm:space-y-2 text-gray-400 text-xs sm:text-sm">
               <li><a href="#" class="hover:text-white transition-colors">О нас</a></li>
               <li><a href="#" class="hover:text-white transition-colors">Контакты</a></li>
               <li><a href="#" class="hover:text-white transition-colors">Блог</a></li>
             </ul>
           </div>
           <div>
-            <h4 class="text-white font-semibold mb-4">Поддержка</h4>
-            <ul class="space-y-2 text-gray-400 text-sm">
+            <h4 class="text-white font-semibold mb-3 sm:mb-4 text-sm sm:text-base">Поддержка</h4>
+            <ul class="space-y-1.5 sm:space-y-2 text-gray-400 text-xs sm:text-sm">
               <li><a href="#" class="hover:text-white transition-colors">Помощь</a></li>
               <li><a href="#" class="hover:text-white transition-colors">Документация</a></li>
               <li><a href="#" class="hover:text-white transition-colors">API</a></li>
             </ul>
           </div>
         </div>
-        <div class="mt-8 pt-8 border-t border-[#26272A] text-center text-gray-400 text-sm">
+        <div class="mt-6 sm:mt-8 pt-6 sm:pt-8 border-t border-[#26272A] text-center text-gray-400 text-xs sm:text-sm">
           <p>© 2024 Гранула. Все права защищены.</p>
         </div>
     </div>

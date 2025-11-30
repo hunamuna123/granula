@@ -1,12 +1,12 @@
 <template>
-  <div class="space-y-6">
-    <div class="flex items-center justify-between">
+  <div class="space-y-4 sm:space-y-6">
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4">
       <div>
-        <h1 class="text-2xl font-bold text-white mb-2">Рабочие пространства</h1>
-        <p class="text-gray-400">Управляйте своими проектами и командами</p>
+        <h1 class="text-xl sm:text-2xl font-bold text-white mb-1 sm:mb-2">Рабочие пространства</h1>
+        <p class="text-sm sm:text-base text-gray-400">Управляйте своими проектами и командами</p>
       </div>
-      <NuxtLink to="/panel/workspaces/create">
-        <Button label="Создать воркспейс" icon="pi pi-plus" class="bg-[#2563EB] hover:bg-[#1d4ed8] border-none" />
+      <NuxtLink to="/panel/workspaces/create" class="sm:flex-shrink-0">
+        <Button label="Создать воркспейс" icon="pi pi-plus" class="w-full sm:w-auto bg-[#2563EB] hover:bg-[#1d4ed8] border-none text-sm" />
       </NuxtLink>
     </div>
 
@@ -22,9 +22,9 @@
     </div>
 
     <!-- Список воркспейсов -->
-    <div v-if="loading" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-      <div v-for="i in 6" :key="i" class="bg-[#26272A] rounded-xl p-6 border border-[#26272A] animate-pulse">
-        <div class="h-6 bg-[#18181B] rounded mb-4 w-3/4"></div>
+    <div v-if="loading" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
+      <div v-for="i in 6" :key="i" class="bg-[#26272A] rounded-xl p-4 sm:p-6 border border-[#26272A] animate-pulse">
+        <div class="h-5 sm:h-6 bg-[#18181B] rounded mb-3 sm:mb-4 w-3/4"></div>
         <div class="h-4 bg-[#18181B] rounded mb-2"></div>
         <div class="h-4 bg-[#18181B] rounded w-2/3"></div>
       </div>
@@ -35,30 +35,30 @@
       <Button label="Повторить" icon="pi pi-refresh" @click="loadWorkspaces" class="bg-[#2563EB] hover:bg-[#1d4ed8] border-none" />
     </div>
 
-    <div v-else-if="filteredWorkspaces.length === 0" class="text-center py-12">
+    <div v-else-if="filteredWorkspaces.length === 0" class="text-center py-8 sm:py-12">
       <div class="text-gray-400 mb-4">
-        <svg class="w-16 h-16 mx-auto mb-4 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg class="w-12 h-12 sm:w-16 sm:h-16 mx-auto mb-4 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
         </svg>
       </div>
-      <h3 class="text-xl font-semibold text-white mb-2">Нет воркспейсов</h3>
-      <p class="text-gray-400 mb-6">Создайте свой первый воркспейс для работы</p>
+      <h3 class="text-lg sm:text-xl font-semibold text-white mb-2">Нет воркспейсов</h3>
+      <p class="text-sm sm:text-base text-gray-400 mb-4 sm:mb-6 px-4">Создайте свой первый воркспейс для работы</p>
       <NuxtLink to="/panel/workspaces/create">
-        <Button label="Создать воркспейс" icon="pi pi-plus" class="bg-[#2563EB] hover:bg-[#1d4ed8] border-none" />
+        <Button label="Создать воркспейс" icon="pi pi-plus" class="bg-[#2563EB] hover:bg-[#1d4ed8] border-none text-sm" />
       </NuxtLink>
     </div>
 
-    <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+    <div v-else class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
       <div 
         v-for="workspace in filteredWorkspaces" 
         :key="workspace.id"
         class="bg-[#26272A] rounded-xl border border-[#26272A] hover:border-[#2563EB] transition-all cursor-pointer overflow-hidden group"
         @click="selectWorkspace(workspace)"
       >
-        <div class="p-6">
-          <div class="flex items-start justify-between mb-4">
-            <div class="w-12 h-12 bg-[#2563EB]/20 rounded-xl flex items-center justify-center">
-              <svg class="w-6 h-6 text-[#2563EB]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div class="p-4 sm:p-6">
+          <div class="flex items-start justify-between mb-3 sm:mb-4">
+            <div class="w-10 h-10 sm:w-12 sm:h-12 bg-[#2563EB]/20 rounded-lg sm:rounded-xl flex items-center justify-center">
+              <svg class="w-5 h-5 sm:w-6 sm:h-6 text-[#2563EB]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
               </svg>
             </div>
@@ -68,18 +68,18 @@
             </span>
           </div>
           
-          <h3 class="text-lg font-semibold text-white mb-2 truncate">{{ workspace.name }}</h3>
-          <p class="text-sm text-gray-400 mb-4 line-clamp-2">{{ workspace.description || 'Без описания' }}</p>
+          <h3 class="text-base sm:text-lg font-semibold text-white mb-1 sm:mb-2 truncate">{{ workspace.name }}</h3>
+          <p class="text-xs sm:text-sm text-gray-400 mb-3 sm:mb-4 line-clamp-2">{{ workspace.description || 'Без описания' }}</p>
           
-          <div class="flex items-center justify-between text-sm text-gray-400 mb-4">
+          <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between text-xs sm:text-sm text-gray-400 mb-3 sm:mb-4 gap-1 sm:gap-2">
             <div class="flex items-center gap-1">
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z" />
               </svg>
               <span>{{ workspace.member_count }} участников</span>
             </div>
             <div class="flex items-center gap-1">
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
               </svg>
               <span>{{ formatDate(workspace.created_at) }}</span>
@@ -94,8 +94,8 @@
               :outlined="currentWorkspaceId !== workspace.id"
               size="small"
               :class="currentWorkspaceId === workspace.id 
-                ? 'flex-1 bg-[#2563EB] border-[#2563EB] hover:bg-[#1d4ed8]' 
-                : 'flex-1 border-[#26272A] text-white hover:bg-[#27272A]'"
+                ? 'flex-1 bg-[#2563EB] border-[#2563EB] hover:bg-[#1d4ed8] text-sm' 
+                : 'flex-1 border-[#26272A] text-white hover:bg-[#27272A] text-sm'"
               @click.stop="selectWorkspace(workspace)"
             />
             <Button 
@@ -139,7 +139,7 @@
       v-model:visible="deleteDialog" 
       modal 
       header="Удаление воркспейса"
-      :style="{ width: '400px' }"
+      :style="{ width: '90vw', maxWidth: '400px' }"
       class="p-fluid"
     >
       <p class="text-white mb-4">Вы уверены, что хотите удалить воркспейс "{{ workspaceToDelete?.name }}"?</p>

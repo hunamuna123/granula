@@ -1,41 +1,43 @@
 <template>
-  <div class="space-y-6">
+  <div class="space-y-4 sm:space-y-6">
     <!-- Header -->
-    <div class="flex items-center justify-between">
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4">
       <div>
-        <h1 class="text-2xl font-bold text-white mb-2">Заявки на экспертов</h1>
-        <p class="text-gray-400">Управляйте заявками на консультации и услуги специалистов</p>
+        <h1 class="text-xl sm:text-2xl font-bold text-white mb-1 sm:mb-2">Заявки на экспертов</h1>
+        <p class="text-sm sm:text-base text-gray-400">Управляйте заявками на консультации и услуги специалистов</p>
       </div>
-      <NuxtLink to="/panel/requests/create">
-        <Button label="Новая заявка" icon="pi pi-plus" class="bg-[#2563EB] hover:bg-[#1d4ed8] border-none" />
+      <NuxtLink to="/panel/requests/create" class="sm:flex-shrink-0">
+        <Button label="Новая заявка" icon="pi pi-plus" class="w-full sm:w-auto bg-[#2563EB] hover:bg-[#1d4ed8] border-none text-sm" />
       </NuxtLink>
     </div>
 
     <!-- Фильтры -->
-    <div class="flex flex-col sm:flex-row gap-4">
+    <div class="flex flex-col gap-3 sm:gap-4">
       <div class="flex-1">
         <InputText 
           v-model="searchQuery" 
           placeholder="Поиск по номеру заявки..."
-          class="w-full bg-[#26272A] border-[#26272A] text-white"
+          class="w-full bg-[#26272A] border-[#26272A] text-white text-sm"
         />
       </div>
-      <Dropdown 
-        v-model="statusFilter" 
-        :options="statusOptions" 
-        optionLabel="label"
-        optionValue="value"
-        placeholder="Все статусы"
-        class="w-full sm:w-[200px] bg-[#26272A] border-[#26272A]"
-      />
-      <Dropdown 
-        v-model="categoryFilter" 
-        :options="categoryOptions" 
-        optionLabel="label"
-        optionValue="value"
-        placeholder="Все категории"
-        class="w-full sm:w-[200px] bg-[#26272A] border-[#26272A]"
-      />
+      <div class="grid grid-cols-2 sm:flex gap-2 sm:gap-4">
+        <Dropdown 
+          v-model="statusFilter" 
+          :options="statusOptions" 
+          optionLabel="label"
+          optionValue="value"
+          placeholder="Все статусы"
+          class="w-full sm:w-[160px] bg-[#26272A] border-[#26272A] text-sm"
+        />
+        <Dropdown 
+          v-model="categoryFilter" 
+          :options="categoryOptions" 
+          optionLabel="label"
+          optionValue="value"
+          placeholder="Все категории"
+          class="w-full sm:w-[160px] bg-[#26272A] border-[#26272A] text-sm"
+        />
+      </div>
     </div>
 
     <!-- Список заявок -->
@@ -51,64 +53,64 @@
       </div>
     </div>
 
-    <div v-else-if="filteredRequests.length === 0" class="bg-[#26272A] rounded-xl p-12 text-center">
-      <div class="w-20 h-20 bg-[#2563EB]/20 rounded-full flex items-center justify-center mx-auto mb-4">
-        <i class="pi pi-inbox text-4xl text-[#2563EB]"></i>
+    <div v-else-if="filteredRequests.length === 0" class="bg-[#26272A] rounded-xl p-8 sm:p-12 text-center">
+      <div class="w-16 h-16 sm:w-20 sm:h-20 bg-[#2563EB]/20 rounded-full flex items-center justify-center mx-auto mb-4">
+        <i class="pi pi-inbox text-2xl sm:text-4xl text-[#2563EB]"></i>
       </div>
-      <h3 class="text-xl font-semibold text-white mb-2">Нет заявок</h3>
-      <p class="text-gray-400 max-w-md mx-auto mb-6">
+      <h3 class="text-lg sm:text-xl font-semibold text-white mb-2">Нет заявок</h3>
+      <p class="text-sm sm:text-base text-gray-400 max-w-md mx-auto mb-4 sm:mb-6 px-4">
         Создайте первую заявку на консультацию или услуги специалиста
       </p>
       <NuxtLink to="/panel/requests/create">
-        <Button label="Создать заявку" icon="pi pi-plus" class="bg-[#2563EB] hover:bg-[#1d4ed8] border-none" />
+        <Button label="Создать заявку" icon="pi pi-plus" class="bg-[#2563EB] hover:bg-[#1d4ed8] border-none text-sm" />
       </NuxtLink>
     </div>
 
-    <div v-else class="space-y-4">
+    <div v-else class="space-y-3 sm:space-y-4">
       <div 
         v-for="request in filteredRequests" 
         :key="request.id"
-        class="bg-[#26272A] rounded-xl p-6 border border-[#26272A] hover:border-[#2563EB]/50 transition-colors cursor-pointer"
+        class="bg-[#26272A] rounded-xl p-4 sm:p-6 border border-[#26272A] hover:border-[#2563EB]/50 transition-colors cursor-pointer"
         @click="viewRequest(request.id)"
       >
-        <div class="flex items-start justify-between gap-4">
-          <div class="flex-1">
-            <div class="flex items-center gap-3 mb-2">
-              <span class="text-lg font-semibold text-white">
+        <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 sm:gap-4">
+          <div class="flex-1 min-w-0">
+            <div class="flex flex-wrap items-center gap-2 sm:gap-3 mb-2">
+              <span class="text-base sm:text-lg font-semibold text-white">
                 Заявка #{{ request.id.slice(0, 8) }}
               </span>
               <span :class="[
-                'px-3 py-1 rounded-full text-xs font-medium',
+                'px-2 sm:px-3 py-0.5 sm:py-1 rounded-full text-xs font-medium',
                 getStatusColor(request.status)
               ]">
                 {{ getStatusName(request.status) }}
               </span>
             </div>
-            <div class="flex items-center gap-4 text-sm text-gray-400 mb-3">
+            <div class="flex flex-wrap items-center gap-2 sm:gap-4 text-xs sm:text-sm text-gray-400 mb-2 sm:mb-3">
               <span class="flex items-center gap-1">
-                <i class="pi pi-tag"></i>
+                <i class="pi pi-tag text-xs"></i>
                 {{ getCategoryName(request.category) }}
               </span>
               <span class="flex items-center gap-1">
-                <i class="pi pi-calendar"></i>
+                <i class="pi pi-calendar text-xs"></i>
                 {{ formatDate(request.created_at) }}
               </span>
               <span v-if="request.price" class="flex items-center gap-1">
-                <i class="pi pi-wallet"></i>
+                <i class="pi pi-wallet text-xs"></i>
                 {{ formatPrice(request.price) }} ₽
               </span>
             </div>
-            <div class="flex items-center gap-4 text-sm">
+            <div class="flex flex-wrap items-center gap-2 sm:gap-4 text-xs sm:text-sm">
               <span class="text-gray-300">
                 <strong>Контакт:</strong> {{ request.contact_name }}
               </span>
               <span class="text-gray-400">{{ request.contact_phone }}</span>
             </div>
-            <p v-if="request.comment" class="text-sm text-gray-400 mt-2 line-clamp-2">
+            <p v-if="request.comment" class="text-xs sm:text-sm text-gray-400 mt-2 line-clamp-2">
               {{ request.comment }}
             </p>
           </div>
-          <div class="flex items-center gap-2">
+          <div class="flex items-center gap-2 self-end sm:self-start">
             <Button 
               v-if="request.status === 'pending' || request.status === 'draft'"
               icon="pi pi-times" 
@@ -148,7 +150,7 @@
       v-model:visible="cancelDialog" 
       modal 
       header="Отмена заявки"
-      :style="{ width: '400px' }"
+      :style="{ width: '90vw', maxWidth: '400px' }"
     >
       <p class="text-white mb-4">Вы уверены, что хотите отменить заявку?</p>
       <p class="text-gray-400 text-sm mb-6">Это действие нельзя отменить.</p>

@@ -14,61 +14,61 @@
     </div>
   </div>
   
-  <div v-else-if="user" class="space-y-6">
+  <div v-else-if="user" class="space-y-4 sm:space-y-6">
     <!-- Welcome banner -->
-    <div class="bg-gradient-to-r from-[#2563EB] to-[#1D4ED8] rounded-xl p-6">
-      <div class="flex items-center justify-between">
+    <div class="bg-gradient-to-r from-[#2563EB] to-[#1D4ED8] rounded-xl sm:rounded-2xl p-4 sm:p-6">
+      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 class="text-2xl font-bold text-white mb-2">
+          <h1 class="text-lg sm:text-xl md:text-2xl font-bold text-white mb-1 sm:mb-2">
             Добро пожаловать, {{ user.name || user.email }}!
           </h1>
-          <p class="text-white/80">
+          <p class="text-white/80 text-sm sm:text-base">
             Управляйте планировками, проверяйте соответствие нормам и общайтесь с AI ассистентом
           </p>
         </div>
-        <div class="hidden md:block">
+        <div class="sm:flex-shrink-0">
           <NuxtLink to="/panel/plane/create">
-            <Button label="Создать планировку" icon="pi pi-plus" class="bg-white/20 hover:bg-white/30 border-none text-white" />
+            <Button label="Создать планировку" icon="pi pi-plus" class="w-full sm:w-auto bg-white/20 hover:bg-white/30 border-none text-white text-sm" />
           </NuxtLink>
         </div>
       </div>
     </div>
 
     <!-- Quick actions -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
       <NuxtLink to="/panel/plane/create" class="block">
-        <div class="bg-[#26272A] rounded-xl p-6 border border-[#26272A] hover:border-[#2563EB]/50 transition-colors group">
-          <div class="w-12 h-12 bg-[#2563EB]/20 rounded-xl flex items-center justify-center mb-4 group-hover:bg-[#2563EB]/30 transition-colors">
-            <svg class="w-6 h-6 text-[#2563EB]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div class="bg-[#26272A] rounded-xl p-4 sm:p-6 border border-[#26272A] hover:border-[#2563EB]/50 transition-colors group">
+          <div class="w-10 h-10 sm:w-12 sm:h-12 bg-[#2563EB]/20 rounded-lg sm:rounded-xl flex items-center justify-center mb-3 sm:mb-4 group-hover:bg-[#2563EB]/30 transition-colors">
+            <svg class="w-5 h-5 sm:w-6 sm:h-6 text-[#2563EB]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
             </svg>
           </div>
-          <h3 class="text-lg font-semibold text-white mb-2">Создать планировку</h3>
-          <p class="text-sm text-gray-400">Загрузите план квартиры для автоматической оцифровки</p>
+          <h3 class="text-base sm:text-lg font-semibold text-white mb-1 sm:mb-2">Создать планировку</h3>
+          <p class="text-xs sm:text-sm text-gray-400">Загрузите план квартиры для автоматической оцифровки</p>
         </div>
       </NuxtLink>
 
       <NuxtLink to="/panel/ai-chat" class="block">
-        <div class="bg-[#26272A] rounded-xl p-6 border border-[#26272A] hover:border-[#2563EB]/50 transition-colors group">
-          <div class="w-12 h-12 bg-purple-500/20 rounded-xl flex items-center justify-center mb-4 group-hover:bg-purple-500/30 transition-colors">
-            <svg class="w-6 h-6 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div class="bg-[#26272A] rounded-xl p-4 sm:p-6 border border-[#26272A] hover:border-[#2563EB]/50 transition-colors group">
+          <div class="w-10 h-10 sm:w-12 sm:h-12 bg-purple-500/20 rounded-lg sm:rounded-xl flex items-center justify-center mb-3 sm:mb-4 group-hover:bg-purple-500/30 transition-colors">
+            <svg class="w-5 h-5 sm:w-6 sm:h-6 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
             </svg>
           </div>
-          <h3 class="text-lg font-semibold text-white mb-2">AI Ассистент</h3>
-          <p class="text-sm text-gray-400">Задайте вопрос или получите рекомендации по планировке</p>
+          <h3 class="text-base sm:text-lg font-semibold text-white mb-1 sm:mb-2">AI Ассистент</h3>
+          <p class="text-xs sm:text-sm text-gray-400">Задайте вопрос или получите рекомендации по планировке</p>
         </div>
       </NuxtLink>
 
-      <NuxtLink to="/panel/compliance" class="block">
-        <div class="bg-[#26272A] rounded-xl p-6 border border-[#26272A] hover:border-[#2563EB]/50 transition-colors group">
-          <div class="w-12 h-12 bg-green-500/20 rounded-xl flex items-center justify-center mb-4 group-hover:bg-green-500/30 transition-colors">
-            <svg class="w-6 h-6 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <NuxtLink to="/panel/compliance" class="block sm:col-span-2 lg:col-span-1">
+        <div class="bg-[#26272A] rounded-xl p-4 sm:p-6 border border-[#26272A] hover:border-[#2563EB]/50 transition-colors group">
+          <div class="w-10 h-10 sm:w-12 sm:h-12 bg-green-500/20 rounded-lg sm:rounded-xl flex items-center justify-center mb-3 sm:mb-4 group-hover:bg-green-500/30 transition-colors">
+            <svg class="w-5 h-5 sm:w-6 sm:h-6 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
             </svg>
           </div>
-          <h3 class="text-lg font-semibold text-white mb-2">Проверить нормы</h3>
-          <p class="text-sm text-gray-400">Автоматическая проверка на соответствие СНиП</p>
+          <h3 class="text-base sm:text-lg font-semibold text-white mb-1 sm:mb-2">Проверить нормы</h3>
+          <p class="text-xs sm:text-sm text-gray-400">Автоматическая проверка на соответствие СНиП</p>
         </div>
       </NuxtLink>
     </div>

@@ -1,31 +1,31 @@
 <template>
-  <div class="space-y-6">
+  <div class="space-y-4 sm:space-y-6">
     <!-- Требуется выбрать воркспейс -->
-    <div v-if="!hasWorkspace" class="text-center py-12">
-      <div class="max-w-md mx-auto">
-        <div class="w-20 h-20 bg-[#2563EB]/20 rounded-full flex items-center justify-center mx-auto mb-6">
-          <svg class="w-10 h-10 text-[#2563EB]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <div v-if="!hasWorkspace" class="text-center py-8 sm:py-12">
+      <div class="max-w-md mx-auto px-4">
+        <div class="w-16 h-16 sm:w-20 sm:h-20 bg-[#2563EB]/20 rounded-full flex items-center justify-center mx-auto mb-4 sm:mb-6">
+          <svg class="w-8 h-8 sm:w-10 sm:h-10 text-[#2563EB]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
           </svg>
         </div>
-        <h2 class="text-2xl font-bold text-white mb-3">Выберите рабочее пространство</h2>
-        <p class="text-gray-400 mb-6">
+        <h2 class="text-xl sm:text-2xl font-bold text-white mb-2 sm:mb-3">Выберите рабочее пространство</h2>
+        <p class="text-sm sm:text-base text-gray-400 mb-4 sm:mb-6">
           Для работы с планировками необходимо сначала создать или выбрать рабочее пространство
         </p>
         <NuxtLink to="/panel/workspaces">
-          <Button label="Перейти к воркспейсам" icon="pi pi-arrow-right" class="bg-[#2563EB] hover:bg-[#1d4ed8] border-none" />
+          <Button label="Перейти к воркспейсам" icon="pi pi-arrow-right" class="bg-[#2563EB] hover:bg-[#1d4ed8] border-none text-sm" />
         </NuxtLink>
       </div>
     </div>
 
     <template v-else>
-      <div class="flex items-center justify-between">
+      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4">
         <div>
-          <h1 class="text-2xl font-bold text-white mb-2">Мои планировки</h1>
-          <p class="text-gray-400">Управляйте своими планировками квартир</p>
+          <h1 class="text-xl sm:text-2xl font-bold text-white mb-1 sm:mb-2">Мои планировки</h1>
+          <p class="text-sm sm:text-base text-gray-400">Управляйте своими планировками квартир</p>
         </div>
-        <NuxtLink to="/panel/plane/create">
-          <Button label="Создать планировку" icon="pi pi-plus" class="bg-[#2563EB] hover:bg-[#1d4ed8] border-none" />
+        <NuxtLink to="/panel/plane/create" class="sm:flex-shrink-0">
+          <Button label="Создать планировку" icon="pi pi-plus" class="w-full sm:w-auto bg-[#2563EB] hover:bg-[#1d4ed8] border-none text-sm" />
         </NuxtLink>
       </div>
 
@@ -49,9 +49,9 @@
     </div>
 
     <!-- Список планировок -->
-    <div v-if="loading" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-      <div v-for="i in 6" :key="i" class="bg-[#26272A] rounded-xl p-6 border border-[#26272A] animate-pulse">
-        <div class="h-48 bg-[#18181B] rounded-lg mb-4"></div>
+    <div v-if="loading" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
+      <div v-for="i in 6" :key="i" class="bg-[#26272A] rounded-xl p-4 sm:p-6 border border-[#26272A] animate-pulse">
+        <div class="h-36 sm:h-48 bg-[#18181B] rounded-lg mb-3 sm:mb-4"></div>
         <div class="h-4 bg-[#18181B] rounded mb-2"></div>
         <div class="h-4 bg-[#18181B] rounded w-2/3"></div>
       </div>
@@ -62,20 +62,20 @@
       <Button label="Повторить" icon="pi pi-refresh" @click="loadPlans" class="bg-[#2563EB] hover:bg-[#1d4ed8] border-none" />
     </div>
 
-    <div v-else-if="filteredPlans.length === 0" class="text-center py-12">
+    <div v-else-if="filteredPlans.length === 0" class="text-center py-8 sm:py-12">
       <div class="text-gray-400 mb-4">
-        <svg class="w-16 h-16 mx-auto mb-4 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg class="w-12 h-12 sm:w-16 sm:h-16 mx-auto mb-4 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
         </svg>
       </div>
-      <h3 class="text-xl font-semibold text-white mb-2">Нет планировок</h3>
-      <p class="text-gray-400 mb-6">Создайте свою первую планировку</p>
+      <h3 class="text-lg sm:text-xl font-semibold text-white mb-2">Нет планировок</h3>
+      <p class="text-sm sm:text-base text-gray-400 mb-4 sm:mb-6 px-4">Создайте свою первую планировку</p>
       <NuxtLink to="/panel/plane/create">
-        <Button label="Создать планировку" icon="pi pi-plus" class="bg-[#2563EB] hover:bg-[#1d4ed8] border-none" />
+        <Button label="Создать планировку" icon="pi pi-plus" class="bg-[#2563EB] hover:bg-[#1d4ed8] border-none text-sm" />
       </NuxtLink>
     </div>
 
-    <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+    <div v-else class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
       <div 
         v-for="plan in filteredPlans" 
         :key="plan.id"
@@ -83,7 +83,7 @@
         @click="navigateToPlan(plan.id)"
       >
         <!-- Preview изображение -->
-        <div class="relative h-48 bg-[#18181B] overflow-hidden">
+        <div class="relative h-36 sm:h-48 bg-[#18181B] overflow-hidden">
           <img 
             v-if="plan.preview_url" 
             :src="plan.preview_url" 
@@ -111,11 +111,11 @@
         </div>
 
         <!-- Контент -->
-        <div class="p-4">
-          <h3 class="text-lg font-semibold text-white mb-2 truncate">{{ plan.name }}</h3>
-          <p class="text-sm text-gray-400 mb-4 line-clamp-2">{{ plan.description || 'Без описания' }}</p>
+        <div class="p-3 sm:p-4">
+          <h3 class="text-base sm:text-lg font-semibold text-white mb-1 sm:mb-2 truncate">{{ plan.name }}</h3>
+          <p class="text-xs sm:text-sm text-gray-400 mb-3 sm:mb-4 line-clamp-2">{{ plan.description || 'Без описания' }}</p>
           
-          <div class="flex items-center justify-between text-sm text-gray-400 mb-4">
+          <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between text-xs sm:text-sm text-gray-400 mb-3 sm:mb-4 gap-1 sm:gap-2">
             <div v-if="plan.area" class="flex items-center gap-1">
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
@@ -181,7 +181,7 @@
         v-model:visible="deleteDialog" 
         modal 
         header="Удаление планировки"
-        :style="{ width: '400px' }"
+        :style="{ width: '90vw', maxWidth: '400px' }"
         class="p-fluid"
       >
         <p class="text-white mb-4">Вы уверены, что хотите удалить планировку "{{ planToDelete?.name }}"?</p>

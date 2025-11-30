@@ -1,8 +1,8 @@
 <template>
-  <div class="min-h-screen flex items-center justify-center bg-[#09090B] py-12 px-4 sm:px-6 lg:px-8">
-    <div class="max-w-md w-full space-y-8">
-      <div class="mt-7 bg-[#18181B] border border-[#26272A] rounded-xl shadow-2xs">
-        <div class="p-4 sm:p-7">
+  <div class="min-h-screen flex items-center justify-center bg-[#09090B] py-6 sm:py-12 px-3 sm:px-6 lg:px-8">
+    <div class="max-w-md w-full space-y-6 sm:space-y-8">
+      <div class="bg-[#18181B] border border-[#26272A] rounded-xl sm:rounded-2xl shadow-2xs">
+        <div class="p-4 sm:p-6 md:p-7">
           <div class="text-center">
             <div class="pb-3 flex items-center justify-center">
               <NuxtLink to="/" class="flex-none rounded-xl text-xl inline-block font-semibold focus:outline-hidden" aria-label="Гранула">
@@ -11,7 +11,7 @@
                 </p>
               </NuxtLink>
             </div>
-            <h1 class="text-2xl font-bold text-white mb-2">Создать аккаунт</h1>
+            <h1 class="text-xl sm:text-2xl font-bold text-white mb-2">Создать аккаунт</h1>
             <p class="text-gray-400 text-sm">Зарегистрируйтесь для начала работы</p>
           </div>
 
@@ -25,7 +25,7 @@
                     type="text"
                     v-model="name" 
                     placeholder="Введите ваше имя"
-                    class="w-full px-4 py-3 bg-[#18181B] border border-[#26272A] rounded-lg text-white placeholder-[#717177] focus:border-[#2563EB] focus:ring-1 focus:ring-[#2563EB] outline-none transition-colors"
+                    class="w-full px-3 sm:px-4 py-2.5 sm:py-3 bg-[#18181B] border border-[#26272A] rounded-lg text-white text-sm sm:text-base placeholder-[#717177] focus:border-[#2563EB] focus:ring-1 focus:ring-[#2563EB] outline-none transition-colors"
                     required
                   />
                   <p v-if="errorBoolen && errorField === 'name'" class="text-xs text-red-600 mt-2">{{ error }}</p>
@@ -38,7 +38,7 @@
                     type="email"
                     v-model="email" 
                     placeholder="Введите вашу почту"
-                    class="w-full px-4 py-3 bg-[#18181B] border border-[#26272A] rounded-lg text-white placeholder-[#717177] focus:border-[#2563EB] focus:ring-1 focus:ring-[#2563EB] outline-none transition-colors"
+                    class="w-full px-3 sm:px-4 py-2.5 sm:py-3 bg-[#18181B] border border-[#26272A] rounded-lg text-white text-sm sm:text-base placeholder-[#717177] focus:border-[#2563EB] focus:ring-1 focus:ring-[#2563EB] outline-none transition-colors"
                     required
                   />
                   <p v-if="errorBoolen && errorField === 'email'" class="text-xs text-red-600 mt-2">{{ error }}</p>
@@ -52,7 +52,7 @@
                       :type="showPassword ? 'text' : 'password'"
                       v-model="password" 
                       placeholder="Создайте пароль"
-                      class="w-full px-4 py-3 bg-[#18181B] border border-[#26272A] rounded-lg text-white placeholder-[#717177] focus:border-[#2563EB] focus:ring-1 focus:ring-[#2563EB] outline-none transition-colors pr-12"
+                      class="w-full px-3 sm:px-4 py-2.5 sm:py-3 bg-[#18181B] border border-[#26272A] rounded-lg text-white text-sm sm:text-base placeholder-[#717177] focus:border-[#2563EB] focus:ring-1 focus:ring-[#2563EB] outline-none transition-colors pr-12"
                       required
                     />
                     <button 
@@ -81,7 +81,7 @@
                       :type="showConfirmPassword ? 'text' : 'password'"
                       v-model="confirmPassword" 
                       placeholder="Повторите пароль"
-                      class="w-full px-4 py-3 bg-[#18181B] border border-[#26272A] rounded-lg text-white placeholder-[#717177] focus:border-[#2563EB] focus:ring-1 focus:ring-[#2563EB] outline-none transition-colors pr-12"
+                      class="w-full px-3 sm:px-4 py-2.5 sm:py-3 bg-[#18181B] border border-[#26272A] rounded-lg text-white text-sm sm:text-base placeholder-[#717177] focus:border-[#2563EB] focus:ring-1 focus:ring-[#2563EB] outline-none transition-colors pr-12"
                       required
                     />
                     <button 
@@ -106,7 +106,7 @@
                 <button 
                   type="submit" 
                   :disabled="loading"
-                  class="w-full py-3 px-4 bg-[#2563EB] hover:bg-[#1D4ED8] text-white font-medium rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                  class="w-full py-2.5 sm:py-3 px-3 sm:px-4 bg-[#2563EB] hover:bg-[#1D4ED8] text-white text-sm sm:text-base font-medium rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                 >
                   <svg v-if="loading" class="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                     <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
