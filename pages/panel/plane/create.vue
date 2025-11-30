@@ -377,20 +377,15 @@ export default {
           this.processingStatus = 'Подготовка к распознаванию...'
           this.processingProgress = 10
           
-          // Конвертируем изображение в base64
-          const imageBase64 = await this.fileToBase64(this.uploadedFile)
-          
-          // Запускаем AI распознавание
-          const recognizeResult = await $fetch(`${this.apiStore.url}api/v1/ai/recognize`, {
+          // Запускаем AI распознавание через правильный endpoint
+          // POST /floor-plans/{floor_plan_id}/recognize - изображение уже на сервере!
+          const recognizeResult = await $fetch(`${this.apiStore.url}api/v1/floor-plans/${floorPlan.id}/recognize`, {
             method: 'POST',
             headers: {
               'Authorization': `Bearer ${this.accessTokenCookie.value}`,
               'Content-Type': 'application/json'
             },
             body: {
-              floor_plan_id: floorPlan.id,
-              image_base64: imageBase64,
-              image_type: this.uploadedFile.type,
               options: {
                 detect_load_bearing: true,
                 detect_wet_zones: true,
@@ -400,13 +395,10 @@ export default {
           })
           
           const recognizeData = recognizeResult.data || recognizeResult
+          console.log('✅ Recognition started:', recognizeData)
           
-          if (recognizeData?.job_id) {
-            await this.pollRecognitionStatus(recognizeData.job_id, floorPlan.id)
-          } else {
-            localStorage.setItem(`newly_created_${floorPlan.id}`, 'true')
-            this.$router.push(`/panel/plane/${floorPlan.id}`)
-          }
+          // Запускаем polling статуса по floor_plan_id
+          await this.pollRecognitionStatus(floorPlan.id)
         }
       } catch (err) {
         this.error = err.data?.message || err.message || 'Ошибка создания планировки'
@@ -426,12 +418,13 @@ export default {
         reader.readAsDataURL(file)
       })
     },
-    async pollRecognitionStatus(jobId, floorPlanId) {
+    async pollRecognitionStatus(floorPlanId) {
       const self = this
       
       const pollInterval = setInterval(async () => {
         try {
-          const result = await $fetch(`${this.apiStore.url}api/v1/ai/recognize/${jobId}/status`, {
+          // GET /floor-plans/{floor_plan_id}/recognition-status
+          const result = await $fetch(`${this.apiStore.url}api/v1/floor-plans/${floorPlanId}/recognition-status`, {
             method: 'GET',
             headers: {
               'Authorization': `Bearer ${self.accessTokenCookie.value}`,
