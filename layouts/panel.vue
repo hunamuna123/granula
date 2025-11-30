@@ -27,6 +27,10 @@ const isPlansListActive = computed(() => {
            (route.path.startsWith('/panel/plane/') && route.path !== '/panel/plane/create' && /^\/panel\/plane\/[^\/]+$/.test(route.path))
 })
 
+const isWorkspacesActive = computed(() => {
+    return route.path.startsWith('/panel/workspaces')
+})
+
 function closeSidebar() {
     if (window.innerWidth < 1024 && sidebar.value) {
         if (window.HSOverlay) {
@@ -119,6 +123,17 @@ function closeSidebar() {
                             class="mb-3 ml-2  shrink-0 text-xs font-medium text-[#717177] uppercase whitespace-nowrap truncate transition-[margin,opacity,transform] duration-100 ease-linear [&>svg]:size-4 [&>svg]:shrink-0">
                             Конструктор
                         </div>
+                        <li>
+                            <NuxtLink to="/panel/workspaces"
+                                class="group  w-full flex items-center gap-3 px-4 py-2 rounded-xl font-medium transition-all border-l-4 border-transparent"
+                                :class="isWorkspacesActive ? 'bg-[#2563EB] text-white' : 'hover:bg-[#27272A] text-[#717177]'"
+                                @click="closeSidebar">
+                                <svg class="w-5 h-5 text-inherit" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
+                                </svg>
+                                <span>Воркспейсы</span>
+                            </NuxtLink>
+                        </li>
                         <li>
                             <NuxtLink to="/panel/plane/create"
                                 class="group  w-full flex items-center gap-3 px-4 py-2 rounded-xl font-medium transition-all border-l-4 border-transparent"

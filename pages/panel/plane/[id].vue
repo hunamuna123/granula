@@ -289,20 +289,29 @@ definePageMeta({
 })
 
 import { ref, computed, onMounted } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
+import { useRoute, useRouter, useCookie } from '#imports'
+import { api as useApiStore } from '@/store/api'
 
 const route = useRoute()
 const router = useRouter()
+const apiStore = useApiStore()
+const accessToken = useCookie('access_token')
+const workspaceId = useCookie('workspace_id')
 
 const planId = route.params.id
 const editor = ref(null)
+const floorPlan = ref(null)
+const scene = ref(null)
+const loading = ref(true)
+const sceneLoading = ref(false)
+const recognitionResult = ref(null)
 
 const planName = ref('')
 const planDescription = ref('')
 const editPlanName = ref('')
 const editPlanDescription = ref('')
-const totalArea = ref(65.5)
-const roomsCount = ref(2)
+const totalArea = ref(0)
+const roomsCount = ref(0)
 const validationStatus = ref('valid') // 'valid', 'warning', 'error'
 
 const showNameDialog = ref(false)
@@ -310,6 +319,8 @@ const showVariantsDialog = ref(false)
 const showBTIDialog = ref(false)
 const showDeleteDialog = ref(false)
 const selectedService = ref(null)
+const saving = ref(false)
+const deleting = ref(false)
 
 const btiServices = [
   {
@@ -374,65 +385,333 @@ function formatTime(date) {
   return `${days} дн. назад`
 }
 
-function updatePlanName() {
-  planName.value = editPlanName.value
-  planDescription.value = editPlanDescription.value
-  showNameDialog.value = false
-  // TODO: Сохранение на сервер
+async function loadFloorPlan() {
+  try {
+    loading.value = true
+    const result = await $fetch(`${apiStore.url}api/v1/floor-plans/${planId}`, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${accessToken.value}`,
+        'Content-Type': 'application/json'
+      }
+    })
+    
+    floorPlan.value = result.data || result
+    planName.value = floorPlan.value.name || `Планировка #${planId}`
+    planDescription.value = floorPlan.value.description || ''
+    editPlanName.value = planName.value
+    editPlanDescription.value = planDescription.value
+    
+    // Загружаем сцену если есть workspace_id
+    if (workspaceId.value) {
+      await loadScene()
+    }
+  } catch (error) {
+    console.error('Ошибка загрузки планировки:', error)
+    planName.value = `Планировка #${planId}`
+    editPlanName.value = planName.value
+  } finally {
+    loading.value = false
+  }
 }
 
-function savePlan() {
-  // TODO: Сохранение планировки
-  console.log('Сохранение планировки...')
+// Загрузка сцены из API
+async function loadScene() {
+  try {
+    sceneLoading.value = true
+    
+    // Пробуем загрузить сцену по floor_plan_id
+    const scenesResult = await $fetch(`${apiStore.url}api/v1/workspaces/${workspaceId.value}/scenes`, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${accessToken.value}`,
+        'Content-Type': 'application/json'
+      },
+      query: {
+        floor_plan_id: planId
+      }
+    })
+    
+    const scenes = scenesResult.data || scenesResult.scenes || scenesResult
+    
+    if (Array.isArray(scenes) && scenes.length > 0) {
+      // Берём первую сцену для этого floor plan
+      scene.value = scenes[0]
+      
+      // Загружаем полную информацию о сцене с элементами
+      const sceneDetails = await $fetch(`${apiStore.url}api/v1/workspaces/${workspaceId.value}/scenes/${scene.value.id}`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${accessToken.value}`,
+          'Content-Type': 'application/json'
+        }
+      })
+      
+      scene.value = sceneDetails.data || sceneDetails
+      
+      // Обновляем площадь и количество комнат из сцены
+      if (scene.value.elements?.rooms) {
+        roomsCount.value = scene.value.elements.rooms.length
+        totalArea.value = scene.value.elements.rooms.reduce((sum, room) => sum + (room.area || 0), 0)
+      }
+      
+      // Передаём данные в редактор
+      if (editor.value && scene.value.elements) {
+        // Даём редактору время инициализироваться
+        setTimeout(() => {
+          if (editor.value?.loadSceneElements) {
+            editor.value.loadSceneElements(scene.value, recognitionResult.value)
+          }
+        }, 500)
+      }
+    } else {
+      // Сцены нет - пробуем загрузить результат распознавания
+      await loadRecognitionResult()
+    }
+  } catch (error) {
+    console.error('Ошибка загрузки сцены:', error)
+    // Если сцена не найдена - пробуем загрузить recognition result
+    await loadRecognitionResult()
+  } finally {
+    sceneLoading.value = false
+  }
+}
+
+// Загрузка результата распознавания
+async function loadRecognitionResult() {
+  try {
+    // Пробуем получить recognition result из floor plan
+    if (floorPlan.value?.recognition_job_id) {
+      const recognizeResult = await $fetch(`${apiStore.url}api/v1/ai/recognize/${floorPlan.value.recognition_job_id}/status`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${accessToken.value}`,
+          'Content-Type': 'application/json'
+        }
+      })
+      
+      const data = recognizeResult.data || recognizeResult
+      
+      if (data?.status === 'completed' && data?.result) {
+        recognitionResult.value = data.result
+        
+        // Обновляем площадь и количество комнат
+        if (data.result.rooms) {
+          roomsCount.value = data.result.rooms.length
+          totalArea.value = data.result.rooms.reduce((sum, room) => sum + (room.area || 0), 0)
+        }
+        
+        // Передаём в редактор
+        if (editor.value) {
+          setTimeout(() => {
+            if (editor.value?.loadSceneElements) {
+              editor.value.loadSceneElements(null, recognitionResult.value)
+            }
+          }, 500)
+        }
+      }
+    }
+  } catch (error) {
+    console.error('Ошибка загрузки результата распознавания:', error)
+  }
+}
+
+async function updatePlanName() {
+  try {
+    saving.value = true
+    await $fetch(`${apiStore.url}api/v1/floor-plans/${planId}`, {
+      method: 'PATCH',
+      headers: {
+        'Authorization': `Bearer ${accessToken.value}`,
+        'Content-Type': 'application/json'
+      },
+      body: {
+        name: editPlanName.value,
+        description: editPlanDescription.value || undefined
+      }
+    })
+    
+    planName.value = editPlanName.value
+    planDescription.value = editPlanDescription.value
+    showNameDialog.value = false
+  } catch (error) {
+    console.error('Ошибка обновления:', error)
+  } finally {
+    saving.value = false
+  }
+}
+
+async function savePlan() {
+  try {
+    saving.value = true
+    
+    // Получаем текущие элементы сцены из редактора
+    const elements = editor.value?.getSceneElements ? editor.value.getSceneElements() : null
+    
+    if (scene.value && scene.value.id) {
+      // Обновляем существующую сцену
+      await $fetch(`${apiStore.url}api/v1/workspaces/${workspaceId.value}/scenes/${scene.value.id}`, {
+        method: 'PATCH',
+        headers: {
+          'Authorization': `Bearer ${accessToken.value}`,
+          'Content-Type': 'application/json'
+        },
+        body: {
+          name: planName.value,
+          elements: elements
+        }
+      })
+      
+      // Также обновляем элементы отдельно если нужно
+      if (elements) {
+        await $fetch(`${apiStore.url}api/v1/workspaces/${workspaceId.value}/scenes/${scene.value.id}/elements`, {
+          method: 'PUT',
+          headers: {
+            'Authorization': `Bearer ${accessToken.value}`,
+            'Content-Type': 'application/json'
+          },
+          body: {
+            elements: elements
+          }
+        })
+      }
+    } else if (workspaceId.value) {
+      // Создаём новую сцену
+      const result = await $fetch(`${apiStore.url}api/v1/workspaces/${workspaceId.value}/scenes`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${accessToken.value}`,
+          'Content-Type': 'application/json'
+        },
+        body: {
+          name: planName.value,
+          description: planDescription.value || undefined,
+          floor_plan_id: planId,
+          elements: elements
+        }
+      })
+      
+      scene.value = result.data || result
+    }
+    
+    // Обновляем floor plan
+    await $fetch(`${apiStore.url}api/v1/floor-plans/${planId}`, {
+      method: 'PATCH',
+      headers: {
+        'Authorization': `Bearer ${accessToken.value}`,
+        'Content-Type': 'application/json'
+      },
+      body: {
+        name: planName.value,
+        description: planDescription.value || undefined
+      }
+    })
+    
+  } catch (error) {
+    console.error('Ошибка сохранения:', error)
+  } finally {
+    saving.value = false
+  }
 }
 
 function exportPDF() {
-  // TODO: Экспорт в PDF
+  // Экспорт в PDF - заглушка
   console.log('Экспорт в PDF...')
 }
 
-function duplicatePlan() {
-  // TODO: Дублирование планировки
-  console.log('Дублирование планировки...')
+async function duplicatePlan() {
+  if (!scene.value || !workspaceId.value) return
+  
+  try {
+    // Создаём новую ветку как дубликат
+    const result = await $fetch(`${apiStore.url}api/v1/scenes/${scene.value.id}/branches`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${accessToken.value}`,
+        'Content-Type': 'application/json'
+      },
+      body: {
+        name: `${planName.value} (копия)`,
+        description: 'Дубликат планировки'
+      }
+    })
+    
+    const branch = result.data || result
+    if (branch?.id) {
+      // Можно показать уведомление об успехе
+    }
+  } catch (error) {
+    console.error('Ошибка дублирования:', error)
+  }
 }
 
 function confirmDelete() {
   showDeleteDialog.value = true
 }
 
-function deletePlan() {
-  // TODO: Удаление на сервере
-  router.push('/panel/plane/list')
+async function deletePlan() {
+  try {
+    deleting.value = true
+    await $fetch(`${apiStore.url}api/v1/floor-plans/${planId}`, {
+      method: 'DELETE',
+      headers: {
+        'Authorization': `Bearer ${accessToken.value}`,
+        'Content-Type': 'application/json'
+      }
+    })
+    
+    router.push('/panel/plane/list')
+  } catch (error) {
+    console.error('Ошибка удаления:', error)
+  } finally {
+    deleting.value = false
+  }
 }
 
-function submitBTIRequest() {
+async function submitBTIRequest() {
   if (!selectedService.value || !btiForm.value.name || !btiForm.value.phone) return
   
-  // TODO: Отправка заявки на сервер
-  console.log('Отправка заявки в БТИ:', {
-    service: selectedService.value,
-    form: btiForm.value
-  })
-  
-  showBTIDialog.value = false
-  // Показ уведомления об успешной отправке
+  try {
+    const serviceMap = {
+      1: 'consultation',
+      2: 'project',
+      3: 'verification',
+      4: 'approval'
+    }
+    
+    await $fetch(`${apiStore.url}api/v1/requests`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${accessToken.value}`,
+        'Content-Type': 'application/json'
+      },
+      body: {
+        workspace_id: workspaceId.value || undefined,
+        title: `Заявка на ${btiServices[selectedService.value - 1]?.name || 'услугу'}`,
+        description: btiForm.value.comment || undefined,
+        category: serviceMap[selectedService.value] || 'consultation',
+        priority: 'normal',
+        contact: {
+          name: btiForm.value.name,
+          phone: btiForm.value.phone,
+          email: btiForm.value.email || undefined
+        }
+      }
+    })
+    
+    showBTIDialog.value = false
+    btiForm.value = { name: '', phone: '', email: '', comment: '' }
+    selectedService.value = null
+    
+    // Переход к списку заявок
+    router.push('/panel/requests')
+  } catch (error) {
+    console.error('Ошибка создания заявки:', error)
+  }
 }
 
 onMounted(async () => {
-  // Загрузка данных планировки
-  // TODO: Загрузка с API
-  if (route.query.name) {
-    planName.value = route.query.name
-    editPlanName.value = route.query.name
-  } else {
-    planName.value = `Планировка #${planId}`
-    editPlanName.value = planName.value
-  }
-  
-  if (route.query.description) {
-    planDescription.value = route.query.description
-    editPlanDescription.value = route.query.description
-  }
+  await loadFloorPlan()
 })
 </script>
 

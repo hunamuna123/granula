@@ -5,10 +5,12 @@ const API_URL = 'https://api.granula.raitokyokai.tech/'
 export const useAuth = () => {
   const accessToken = useCookie('access_token')
   const refreshToken = useCookie('refresh_token')
+  const workspaceId = useCookie('workspace_id', { maxAge: 60 * 60 * 24 * 365 }) // 1 год
 
   const logout = () => {
     accessToken.value = null
     refreshToken.value = null
+    workspaceId.value = null
     navigateTo('/auth/login')
   }
 
@@ -77,6 +79,14 @@ export const useAuth = () => {
     }
   }
 
+  const setWorkspaceId = (id) => {
+    workspaceId.value = id
+  }
+
+  const getWorkspaceId = () => {
+    return workspaceId.value
+  }
+
   return {
     logout,
     isAuthenticated,
@@ -85,6 +95,9 @@ export const useAuth = () => {
     refreshTokens,
     accessToken,
     refreshToken,
+    workspaceId,
+    setWorkspaceId,
+    getWorkspaceId,
     API_URL
   }
 }

@@ -8,46 +8,19 @@
       </div>
     </div>
 
-    <!-- Выбор планировки -->
+    <!-- Выбор сцены -->
     <div class="bg-[#26272A] rounded-xl p-6 border border-[#26272A]">
-      <h3 class="text-lg font-semibold text-white mb-4">Выберите планировку для проверки</h3>
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div>
-          <label class="block text-sm text-gray-400 mb-2">Планировка</label>
-          <Dropdown
-            v-model="selectedFloorPlan"
-            :options="floorPlans"
-            optionLabel="name"
-            optionValue="id"
-            placeholder="Выберите планировку"
-            class="w-full bg-[#18181B] border-[#26272A]"
-          />
-        </div>
-        <div>
-          <label class="block text-sm text-gray-400 mb-2">Тип операции</label>
-          <Dropdown
-            v-model="operationType"
-            :options="operationTypes"
-            optionLabel="label"
-            optionValue="value"
-            placeholder="Выберите тип"
-            class="w-full bg-[#18181B] border-[#26272A]"
-          />
-        </div>
-      </div>
-      
-      <div class="mt-4">
-        <label class="block text-sm text-gray-400 mb-2">Категории проверки</label>
-        <div class="flex flex-wrap gap-2">
-          <div v-for="cat in categories" :key="cat.value" class="flex items-center">
-            <Checkbox 
-              v-model="selectedCategories" 
-              :inputId="cat.value" 
-              :value="cat.value"
-            />
-            <label :for="cat.value" class="ml-2 text-sm text-white">{{ cat.label }}</label>
-          </div>
-        </div>
+      <h3 class="text-lg font-semibold text-white mb-4">Выберите сцену для проверки</h3>
+      <div>
+        <label class="block text-sm text-gray-400 mb-2">Сцена</label>
+        <Dropdown
+          v-model="selectedScene"
+          :options="scenes"
+          optionLabel="name"
+          optionValue="id"
+          placeholder="Выберите сцену"
+          class="w-full bg-[#18181B] border-[#26272A]"
+        />
       </div>
 
       <div class="mt-6">
@@ -55,7 +28,7 @@
           label="Запустить проверку" 
           icon="pi pi-shield"
           :loading="checkingInProgress"
-          :disabled="!selectedFloorPlan"
+          :disabled="!selectedScene"
           class="bg-[#2563EB] hover:bg-[#1d4ed8] border-none"
           @click="runCheck"
         />
@@ -145,27 +118,33 @@
         <div class="divide-y divide-[#26272A]">
           <div 
             v-for="violation in lastCheckResult.violations" 
-            :key="violation.rule_id"
+            :key="violation.rule_code"
             class="p-4"
           >
             <div class="flex items-start gap-4">
-              <div class="w-10 h-10 bg-red-500/20 rounded-lg flex items-center justify-center flex-shrink-0">
-                <i class="pi pi-times text-red-500"></i>
+              <div :class="[
+                'w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0',
+                violation.severity === 'critical' ? 'bg-red-500/20' : 'bg-yellow-500/20'
+              ]">
+                <i :class="violation.severity === 'critical' ? 'pi pi-times text-red-500' : 'pi pi-exclamation-triangle text-yellow-500'"></i>
               </div>
               <div class="flex-1">
                 <div class="flex items-center gap-2 mb-1">
                   <span class="font-medium text-white">{{ violation.rule_name }}</span>
-                  <span class="px-2 py-0.5 text-xs rounded-full bg-red-500/20 text-red-400">
-                    {{ getCategoryName(violation.category) }}
+                  <span :class="[
+                    'px-2 py-0.5 text-xs rounded-full',
+                    violation.severity === 'critical' ? 'bg-red-500/20 text-red-400' : 'bg-yellow-500/20 text-yellow-400'
+                  ]">
+                    {{ violation.severity === 'critical' ? 'Критично' : 'Предупреждение' }}
+                  </span>
+                  <span class="px-2 py-0.5 text-xs rounded-full bg-gray-500/20 text-gray-400">
+                    {{ violation.rule_code }}
                   </span>
                 </div>
                 <p class="text-sm text-gray-400 mb-2">{{ violation.description }}</p>
                 <div class="bg-[#18181B] rounded-lg p-3">
                   <p class="text-sm text-gray-300">
                     <strong class="text-[#2563EB]">Рекомендация:</strong> {{ violation.recommendation }}
-                  </p>
-                  <p v-if="violation.legal_reference" class="text-xs text-gray-500 mt-1">
-                    {{ violation.legal_reference }}
                   </p>
                 </div>
               </div>
@@ -218,29 +197,16 @@ import { api as useApiStore } from '@/store/api'
 export default {
   data() {
     return {
-      selectedFloorPlan: null,
-      operationType: 'renovation',
-      selectedCategories: ['snip', 'housing_code', 'fire_safety', 'sanitary'],
-      floorPlans: [],
+      selectedScene: null,
+      scenes: [],
       lastCheckResult: null,
       checkingInProgress: false,
       apiStore: null,
-      operationTypes: [
-        { label: 'Строительство', value: 'construction' },
-        { label: 'Ремонт', value: 'renovation' },
-        { label: 'Перепланировка', value: 'redevelopment' }
-      ],
-      categories: [
-        { label: 'СНиП', value: 'snip' },
-        { label: 'Жилищный кодекс', value: 'housing_code' },
-        { label: 'Пожарная безопасность', value: 'fire_safety' },
-        { label: 'СанПиН', value: 'sanitary' }
-      ],
       categoryNames: {
-        snip: 'СНиП',
-        housing_code: 'Жилищный кодекс',
-        fire_safety: 'Пожарная безопасность',
-        sanitary: 'СанПиН'
+        kitchen: 'Кухня',
+        bathroom: 'Санузел',
+        living: 'Жилые помещения',
+        general: 'Общие требования'
       }
     }
   },
@@ -260,25 +226,28 @@ export default {
     }
   },
   async mounted() {
-    await this.fetchFloorPlans()
+    await this.fetchScenes()
   },
   methods: {
-    async fetchFloorPlans() {
+    async fetchScenes() {
       try {
-        const result = await $fetch(`${this.apiStore.url}api/v1/floor-plans`, {
+        const workspaceId = useCookie('workspace_id').value
+        if (!workspaceId) return
+        
+        const result = await $fetch(`${this.apiStore.url}api/v1/workspaces/${workspaceId}/scenes`, {
           method: 'GET',
           headers: {
             'Authorization': `Bearer ${this.accessTokenCookie.value}`,
             'Content-Type': 'application/json'
           }
         })
-        this.floorPlans = result.floor_plans || result.data || []
+        this.scenes = result.data || result || []
       } catch (error) {
-        console.error('Ошибка загрузки планировок:', error)
+        console.error('Ошибка загрузки сцен:', error)
       }
     },
     async runCheck() {
-      if (!this.selectedFloorPlan) return
+      if (!this.selectedScene) return
       
       this.checkingInProgress = true
       
@@ -290,13 +259,20 @@ export default {
             'Content-Type': 'application/json'
           },
           body: {
-            floor_plan_id: this.selectedFloorPlan,
-            operation_type: this.operationType,
-            check_categories: this.selectedCategories
+            scene_id: this.selectedScene
           }
         })
         
-        this.lastCheckResult = result.data || result
+        const data = result.data || result
+        // Нормализуем поля ответа
+        this.lastCheckResult = {
+          is_compliant: data.compliant,
+          violations: data.violations || [],
+          warnings: data.warnings || [],
+          passed_rules: data.violations ? 0 : 1,
+          total_rules: (data.violations?.length || 0) + (data.warnings?.length || 0) + 1,
+          overall_score: data.compliant ? 100 : Math.max(0, 100 - (data.violations?.length || 0) * 20)
+        }
       } catch (error) {
         console.error('Ошибка проверки:', error)
       } finally {
@@ -324,15 +300,5 @@ export default {
 
 :deep(.p-dropdown .p-dropdown-label) {
   color: white !important;
-}
-
-:deep(.p-checkbox .p-checkbox-box) {
-  background-color: #18181B !important;
-  border-color: #26272A !important;
-}
-
-:deep(.p-checkbox .p-checkbox-box.p-highlight) {
-  background-color: #2563EB !important;
-  border-color: #2563EB !important;
 }
 </style>

@@ -5,6 +5,8 @@ export default defineNuxtRouteMiddleware(async (to) => {
   const accessToken = useCookie('access_token', { maxAge: 60 * 15 })
   // Refresh Token - 7 дней
   const refreshToken = useCookie('refresh_token', { maxAge: 60 * 60 * 24 * 7 })
+  // Workspace ID - 1 год
+  const workspaceId = useCookie('workspace_id', { maxAge: 60 * 60 * 24 * 365 })
 
   const isProtectedRoute = to.path.startsWith('/panel')
   const isAuthPage = to.path.startsWith('/auth/')

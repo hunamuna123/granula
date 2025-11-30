@@ -187,6 +187,9 @@ export default {
     handleLogout() {
       this.accessTokenCookie.value = null
       this.refreshTokenCookie.value = null
+      // Очищаем workspace_id
+      const workspaceIdCookie = useCookie('workspace_id')
+      workspaceIdCookie.value = null
       this.$router.push('/auth/login')
     },
     formatDate(timestamp) {

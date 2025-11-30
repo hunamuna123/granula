@@ -25,17 +25,17 @@
         <div class="flex items-center gap-2">
           <span class="text-sm text-gray-400">Контекст:</span>
           <Dropdown
-            v-model="selectedFloorPlan"
-            :options="floorPlans"
+            v-model="selectedScene"
+            :options="scenes"
             optionLabel="name"
             optionValue="id"
-            placeholder="Выберите планировку"
+            placeholder="Выберите сцену"
             class="w-[250px] bg-[#18181B] border-[#26272A] text-white"
           />
         </div>
         <div class="flex items-center gap-2 text-sm text-gray-400">
           <i class="pi pi-info-circle"></i>
-          <span>AI учитывает выбранную планировку при ответах</span>
+          <span>AI учитывает выбранную сцену при ответах</span>
         </div>
       </div>
     </div>
@@ -89,8 +89,13 @@
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
                 </svg>
               </div>
-              <div>
-                <p class="whitespace-pre-wrap">{{ message.content }}</p>
+              <div class="overflow-hidden">
+                <div 
+                  v-if="message.role === 'assistant'" 
+                  class="markdown-content prose prose-invert prose-sm max-w-none"
+                  v-html="renderMarkdown(message.content)"
+                ></div>
+                <p v-else class="whitespace-pre-wrap">{{ message.content }}</p>
                 <span class="text-xs opacity-60 mt-1 block">
                   {{ formatTime(message.timestamp) }}
                 </span>
@@ -163,14 +168,16 @@ definePageMeta({
 <script>
 import { useCookie } from "#app"
 import { api as useApiStore } from '@/store/api'
+import { marked } from 'marked'
 
 export default {
   data() {
     return {
       chatHistory: [],
       messageInput: '',
-      selectedFloorPlan: null,
-      floorPlans: [],
+      selectedScene: null,
+      scenes: [],
+      contextId: null,
       suggestions: [],
       loading: false,
       isTyping: false,
@@ -189,21 +196,24 @@ export default {
     this.accessTokenCookie = useCookie('access_token')
   },
   async mounted() {
-    await this.fetchFloorPlans()
+    await this.fetchScenes()
   },
   methods: {
-    async fetchFloorPlans() {
+    async fetchScenes() {
       try {
-        const result = await $fetch(`${this.apiStore.url}api/v1/floor-plans`, {
+        const workspaceId = useCookie('workspace_id').value
+        if (!workspaceId) return
+        
+        const result = await $fetch(`${this.apiStore.url}api/v1/workspaces/${workspaceId}/scenes`, {
           method: 'GET',
           headers: {
             'Authorization': `Bearer ${this.accessTokenCookie.value}`,
             'Content-Type': 'application/json'
           }
         })
-        this.floorPlans = result.floor_plans || result.data || []
+        this.scenes = result.data || result || []
       } catch (error) {
-        console.error('Ошибка загрузки планировок:', error)
+        console.error('Ошибка загрузки сцен:', error)
       }
     },
     async sendMessage() {
@@ -225,19 +235,33 @@ export default {
       this.scrollToBottom()
 
       try {
+        const body = {
+          message: message
+        }
+        
+        if (this.selectedScene) {
+          body.scene_id = this.selectedScene
+        }
+        
+        if (this.contextId) {
+          body.context_id = this.contextId
+        }
+        
         const result = await $fetch(`${this.apiStore.url}api/v1/ai/chat`, {
           method: 'POST',
           headers: {
             'Authorization': `Bearer ${this.accessTokenCookie.value}`,
             'Content-Type': 'application/json'
           },
-          body: {
-            message: message,
-            floor_plan_id: this.selectedFloorPlan || undefined
-          }
+          body
         })
 
         const data = result.data || result
+
+        // Сохраняем context_id для следующего сообщения
+        if (data.context_id) {
+          this.contextId = data.context_id
+        }
 
         // Добавляем ответ AI
         this.chatHistory.push({
@@ -269,6 +293,7 @@ export default {
     clearChat() {
       this.chatHistory = []
       this.suggestions = []
+      this.contextId = null
     },
     scrollToBottom() {
       if (this.$refs.chatContainer) {
@@ -279,6 +304,13 @@ export default {
       if (!timestamp) return ''
       const date = new Date(timestamp)
       return date.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' })
+    },
+    renderMarkdown(content) {
+      if (!content) return ''
+      return marked(content, {
+        breaks: true,
+        gfm: true
+      })
     }
   },
   watch: {
@@ -333,5 +365,135 @@ export default {
 :deep(.p-inputtextarea:focus) {
   border-color: #2563EB !important;
   box-shadow: none !important;
+}
+
+/* Markdown styles */
+.markdown-content {
+  line-height: 1.6;
+}
+
+.markdown-content :deep(p) {
+  margin-bottom: 0.75rem;
+}
+
+.markdown-content :deep(p:last-child) {
+  margin-bottom: 0;
+}
+
+.markdown-content :deep(h1),
+.markdown-content :deep(h2),
+.markdown-content :deep(h3),
+.markdown-content :deep(h4) {
+  font-weight: 600;
+  margin-top: 1rem;
+  margin-bottom: 0.5rem;
+  color: white;
+}
+
+.markdown-content :deep(h1) {
+  font-size: 1.5rem;
+}
+
+.markdown-content :deep(h2) {
+  font-size: 1.25rem;
+}
+
+.markdown-content :deep(h3) {
+  font-size: 1.1rem;
+}
+
+.markdown-content :deep(ul),
+.markdown-content :deep(ol) {
+  padding-left: 1.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.markdown-content :deep(ul) {
+  list-style-type: disc;
+}
+
+.markdown-content :deep(ol) {
+  list-style-type: decimal;
+}
+
+.markdown-content :deep(li) {
+  margin-bottom: 0.25rem;
+}
+
+.markdown-content :deep(code) {
+  background-color: #18181B;
+  padding: 0.15rem 0.4rem;
+  border-radius: 4px;
+  font-size: 0.875rem;
+  font-family: 'Fira Code', 'Monaco', monospace;
+  color: #60a5fa;
+}
+
+.markdown-content :deep(pre) {
+  background-color: #18181B;
+  padding: 1rem;
+  border-radius: 8px;
+  overflow-x: auto;
+  margin: 0.75rem 0;
+}
+
+.markdown-content :deep(pre code) {
+  background: none;
+  padding: 0;
+  color: #e5e7eb;
+}
+
+.markdown-content :deep(blockquote) {
+  border-left: 3px solid #2563EB;
+  padding-left: 1rem;
+  margin: 0.75rem 0;
+  color: #9ca3af;
+  font-style: italic;
+}
+
+.markdown-content :deep(a) {
+  color: #60a5fa;
+  text-decoration: underline;
+}
+
+.markdown-content :deep(a:hover) {
+  color: #93c5fd;
+}
+
+.markdown-content :deep(strong) {
+  font-weight: 600;
+  color: white;
+}
+
+.markdown-content :deep(em) {
+  font-style: italic;
+}
+
+.markdown-content :deep(hr) {
+  border: none;
+  border-top: 1px solid #3f3f46;
+  margin: 1rem 0;
+}
+
+.markdown-content :deep(table) {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 0.75rem 0;
+}
+
+.markdown-content :deep(th),
+.markdown-content :deep(td) {
+  border: 1px solid #3f3f46;
+  padding: 0.5rem;
+  text-align: left;
+}
+
+.markdown-content :deep(th) {
+  background-color: #18181B;
+  font-weight: 600;
+}
+
+.markdown-content :deep(tr:nth-child(even)) {
+  background-color: rgba(24, 24, 27, 0.5);
 }
 </style>

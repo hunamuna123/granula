@@ -73,52 +73,52 @@
     </div>
 
     <div v-else class="space-y-2">
-      <div 
-        v-for="notification in filteredNotifications" 
-        :key="notification.id"
-        :class="[
-          'bg-[#26272A] rounded-xl p-4 border transition-colors cursor-pointer',
-          notification.is_read ? 'border-[#26272A]' : 'border-[#2563EB]/30 bg-[#2563EB]/5'
-        ]"
-        @click="handleNotificationClick(notification)"
-      >
-        <div class="flex items-start gap-4">
-          <div :class="[
-            'w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0',
-            getNotificationBgColor(notification.type)
-          ]">
-            <i :class="[getNotificationIcon(notification.type), getNotificationColor(notification.type)]"></i>
-          </div>
-          <div class="flex-1 min-w-0">
-            <div class="flex items-start justify-between gap-2">
-              <div>
-                <h4 :class="['font-medium', notification.is_read ? 'text-gray-300' : 'text-white']">
-                  {{ notification.title }}
-                </h4>
-                <p class="text-sm text-gray-400 mt-1">{{ notification.message }}</p>
-              </div>
-              <div class="flex items-center gap-2 flex-shrink-0">
-                <span class="text-xs text-gray-500">
-                  {{ formatNotificationTime(notification.created_at) }}
-                </span>
-                <Button 
-                  icon="pi pi-times" 
-                  text
-                  rounded
-                  size="small"
-                  class="text-gray-500 hover:text-white"
-                  @click.stop="deleteNotification(notification.id)"
-                />
-              </div>
+        <div 
+          v-for="notification in filteredNotifications" 
+          :key="notification.id"
+          :class="[
+            'bg-[#26272A] rounded-xl p-4 border transition-colors cursor-pointer',
+            notification.read ? 'border-[#26272A]' : 'border-[#2563EB]/30 bg-[#2563EB]/5'
+          ]"
+          @click="handleNotificationClick(notification)"
+        >
+          <div class="flex items-start gap-4">
+            <div :class="[
+              'w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0',
+              getNotificationBgColor(notification.type)
+            ]">
+              <i :class="[getNotificationIcon(notification.type), getNotificationColor(notification.type)]"></i>
             </div>
-            <div v-if="!notification.is_read" class="mt-2">
-              <span class="inline-flex items-center px-2 py-0.5 rounded text-xs bg-[#2563EB]/20 text-[#2563EB]">
-                Новое
-              </span>
+            <div class="flex-1 min-w-0">
+              <div class="flex items-start justify-between gap-2">
+                <div>
+                  <h4 :class="['font-medium', notification.read ? 'text-gray-300' : 'text-white']">
+                    {{ notification.title }}
+                  </h4>
+                  <p class="text-sm text-gray-400 mt-1">{{ notification.message }}</p>
+                </div>
+                <div class="flex items-center gap-2 flex-shrink-0">
+                  <span class="text-xs text-gray-500">
+                    {{ formatNotificationTime(notification.created_at) }}
+                  </span>
+                  <Button 
+                    icon="pi pi-times" 
+                    text
+                    rounded
+                    size="small"
+                    class="text-gray-500 hover:text-white"
+                    @click.stop="deleteNotification(notification.id)"
+                  />
+                </div>
+              </div>
+              <div v-if="!notification.read" class="mt-2">
+                <span class="inline-flex items-center px-2 py-0.5 rounded text-xs bg-[#2563EB]/20 text-[#2563EB]">
+                  Новое
+                </span>
+              </div>
             </div>
           </div>
         </div>
-      </div>
     </div>
 
     <!-- Clear All Dialog -->
@@ -164,11 +164,11 @@ export default {
   },
   computed: {
     unreadCount() {
-      return this.notifications.filter(n => !n.is_read).length
+      return this.notifications.filter(n => !n.read).length
     },
     filteredNotifications() {
       if (this.activeFilter === 'unread') {
-        return this.notifications.filter(n => !n.is_read)
+        return this.notifications.filter(n => !n.read)
       }
       return this.notifications
     }
@@ -243,7 +243,7 @@ export default {
       return date.toLocaleDateString('ru-RU', { day: 'numeric', month: 'short' })
     },
     async handleNotificationClick(notification) {
-      if (!notification.is_read) {
+      if (!notification.read) {
         await this.markAsRead(notification.id)
       }
       
@@ -264,7 +264,7 @@ export default {
         })
         const notification = this.notifications.find(n => n.id === id)
         if (notification) {
-          notification.is_read = true
+          notification.read = true
         }
       } catch (error) {
         console.error('Ошибка:', error)
@@ -279,7 +279,7 @@ export default {
             'Content-Type': 'application/json'
           }
         })
-        this.notifications.forEach(n => n.is_read = true)
+        this.notifications.forEach(n => n.read = true)
       } catch (error) {
         console.error('Ошибка:', error)
       }

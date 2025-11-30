@@ -1,16 +1,35 @@
 <template>
   <div class="space-y-6">
-    <div class="flex items-center justify-between">
-      <div>
-        <h1 class="text-2xl font-bold text-white mb-2">Создать планировку</h1>
-        <p class="text-gray-400">Загрузите план квартиры для автоматической оцифровки</p>
+    <!-- Требуется выбрать воркспейс -->
+    <div v-if="!hasWorkspace" class="text-center py-12">
+      <div class="max-w-md mx-auto">
+        <div class="w-20 h-20 bg-[#2563EB]/20 rounded-full flex items-center justify-center mx-auto mb-6">
+          <svg class="w-10 h-10 text-[#2563EB]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+          </svg>
+        </div>
+        <h2 class="text-2xl font-bold text-white mb-3">Выберите рабочее пространство</h2>
+        <p class="text-gray-400 mb-6">
+          Для создания планировки необходимо сначала создать или выбрать рабочее пространство
+        </p>
+        <NuxtLink to="/panel/workspaces">
+          <Button label="Перейти к воркспейсам" icon="pi pi-arrow-right" class="bg-[#2563EB] hover:bg-[#1d4ed8] border-none" />
+        </NuxtLink>
       </div>
-      <NuxtLink to="/panel/plane/list">
-        <Button label="Назад к списку" icon="pi pi-arrow-left" outlined class="border-[#26272A] text-white hover:bg-[#27272A]" />
-      </NuxtLink>
     </div>
 
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <template v-else>
+      <div class="flex items-center justify-between">
+        <div>
+          <h1 class="text-2xl font-bold text-white mb-2">Создать планировку</h1>
+          <p class="text-gray-400">Загрузите план квартиры для автоматической оцифровки</p>
+        </div>
+        <NuxtLink to="/panel/plane/list">
+          <Button label="Назад к списку" icon="pi pi-arrow-left" outlined class="border-[#26272A] text-white hover:bg-[#27272A]" />
+        </NuxtLink>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
       <!-- Левая колонка - Загрузка и информация -->
       <div class="lg:col-span-1 space-y-6">
         <!-- Шаги -->
@@ -219,6 +238,7 @@
         </div>
       </div>
     </div>
+    </template>
   </div>
 </template>
 
@@ -253,6 +273,12 @@ export default {
   created() {
     this.apiStore = useApiStore()
     this.accessTokenCookie = useCookie('access_token')
+    this.workspaceIdCookie = useCookie('workspace_id')
+  },
+  computed: {
+    hasWorkspace() {
+      return !!this.workspaceIdCookie?.value
+    }
   },
   methods: {
     triggerFileInput() {
@@ -330,11 +356,9 @@ export default {
         const formData = new FormData()
         formData.append('file', this.uploadedFile)
         formData.append('name', this.planName.trim())
-        if (this.planDescription.trim()) {
-          formData.append('description', this.planDescription.trim())
-        }
-        if (this.planAddress.trim()) {
-          formData.append('address', this.planAddress.trim())
+        // Добавляем workspace_id
+        if (this.workspaceIdCookie.value) {
+          formData.append('workspace_id', this.workspaceIdCookie.value)
         }
 
         const result = await $fetch(`${this.apiStore.url}api/v1/floor-plans`, {
@@ -350,24 +374,35 @@ export default {
         if (floorPlan && floorPlan.id) {
           this.uploading = false
           this.processing = true
+          this.processingStatus = 'Подготовка к распознаванию...'
+          this.processingProgress = 10
           
-          // Запускаем обработку
-          const processResult = await $fetch(`${this.apiStore.url}api/v1/floor-plans/${floorPlan.id}/process`, {
+          // Конвертируем изображение в base64
+          const imageBase64 = await this.fileToBase64(this.uploadedFile)
+          
+          // Запускаем AI распознавание
+          const recognizeResult = await $fetch(`${this.apiStore.url}api/v1/ai/recognize`, {
             method: 'POST',
             headers: {
               'Authorization': `Bearer ${this.accessTokenCookie.value}`,
               'Content-Type': 'application/json'
             },
             body: {
-              create_scene: true,
-              run_compliance: true
+              floor_plan_id: floorPlan.id,
+              image_base64: imageBase64,
+              image_type: this.uploadedFile.type,
+              options: {
+                detect_load_bearing: true,
+                detect_wet_zones: true,
+                detect_furniture: false
+              }
             }
           })
           
-          const processData = processResult.data || processResult
+          const recognizeData = recognizeResult.data || recognizeResult
           
-          if (processData?.task_id) {
-            await this.pollProcessingStatus(processData.task_id, floorPlan.id)
+          if (recognizeData?.job_id) {
+            await this.pollRecognitionStatus(recognizeData.job_id, floorPlan.id)
           } else {
             this.$router.push(`/panel/plane/${floorPlan.id}`)
           }
@@ -378,21 +413,25 @@ export default {
         this.processing = false
       }
     },
-    async pollProcessingStatus(taskId, floorPlanId) {
-      const steps = [
-        { progress: 20, status: 'Анализ изображения...' },
-        { progress: 40, status: 'Распознавание контуров...' },
-        { progress: 60, status: 'Определение стен и помещений...' },
-        { progress: 80, status: 'Измерение размеров...' },
-        { progress: 100, status: 'Создание 3D модели...' }
-      ]
-      
-      let stepIndex = 0
+    async fileToBase64(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader()
+        reader.onload = () => {
+          // Remove data URL prefix (data:image/jpeg;base64,) to get raw base64
+          const result = reader.result
+          const base64 = result.split(',')[1] || result
+          resolve(base64)
+        }
+        reader.onerror = reject
+        reader.readAsDataURL(file)
+      })
+    },
+    async pollRecognitionStatus(jobId, floorPlanId) {
       const self = this
       
       const pollInterval = setInterval(async () => {
         try {
-          const result = await $fetch(`${this.apiStore.url}api/v1/floor-plans/tasks/${taskId}`, {
+          const result = await $fetch(`${this.apiStore.url}api/v1/ai/recognize/${jobId}/status`, {
             method: 'GET',
             headers: {
               'Authorization': `Bearer ${self.accessTokenCookie.value}`,
@@ -405,13 +444,40 @@ export default {
           if (data?.status === 'completed') {
             clearInterval(pollInterval)
             self.step = 3
+            self.processingProgress = 100
+            self.processingStatus = 'Распознавание завершено!'
+            
+            // Создаём сцену из результата распознавания
+            if (data.result && self.workspaceIdCookie.value) {
+              try {
+                // Конвертируем recognition result в scene elements
+                const elements = self.convertRecognitionToScene(data.result)
+                
+                await $fetch(`${self.apiStore.url}api/v1/workspaces/${self.workspaceIdCookie.value}/scenes`, {
+                  method: 'POST',
+                  headers: {
+                    'Authorization': `Bearer ${self.accessTokenCookie.value}`,
+                    'Content-Type': 'application/json'
+                  },
+                  body: {
+                    name: self.planName.trim(),
+                    description: self.planDescription.trim() || undefined,
+                    floor_plan_id: floorPlanId,
+                    elements: elements
+                  }
+                })
+              } catch (e) {
+                console.error('Ошибка создания сцены:', e)
+              }
+            }
+            
             self.$router.push(`/panel/plane/${floorPlanId}`)
             return
           }
           
           if (data?.status === 'failed') {
             clearInterval(pollInterval)
-            self.error = 'Ошибка обработки планировки'
+            self.error = data.error || 'Ошибка обработки планировки'
             self.processing = false
             return
           }
@@ -419,10 +485,17 @@ export default {
           // Обновляем прогресс
           if (data?.progress) {
             self.processingProgress = data.progress
-          } else if (stepIndex < steps.length) {
-            self.processingProgress = steps[stepIndex].progress
-            self.processingStatus = steps[stepIndex].status
-            stepIndex++
+            if (data.progress < 30) {
+              self.processingStatus = 'Анализ изображения...'
+            } else if (data.progress < 50) {
+              self.processingStatus = 'Распознавание контуров...'
+            } else if (data.progress < 70) {
+              self.processingStatus = 'Определение стен и помещений...'
+            } else if (data.progress < 90) {
+              self.processingStatus = 'Измерение размеров...'
+            } else {
+              self.processingStatus = 'Создание 3D модели...'
+            }
           }
         } catch {
           // Continue polling
@@ -439,6 +512,146 @@ export default {
     },
     cancel() {
       this.$router.push('/panel/plane/list')
+    },
+    
+    // Конвертация recognition result в scene elements
+    convertRecognitionToScene(recognitionResult) {
+      if (!recognitionResult) return null
+      
+      const elements = {
+        walls: [],
+        rooms: [],
+        openings: [],
+        furniture: [],
+        utilities: []
+      }
+      
+      // Конвертируем стены
+      if (recognitionResult.walls) {
+        elements.walls = recognitionResult.walls.map((wall, index) => ({
+          id: wall.temp_id || `wall_${index}`,
+          type: 'wall',
+          name: wall.is_load_bearing ? 'Несущая стена' : 'Перегородка',
+          start: { x: wall.start?.x || 0, y: 0, z: wall.start?.y || 0 },
+          end: { x: wall.end?.x || 0, y: 0, z: wall.end?.y || 0 },
+          height: 3.0,
+          thickness: wall.thickness || 0.2,
+          properties: {
+            is_load_bearing: wall.is_load_bearing || false,
+            material: wall.material || 'unknown',
+            can_demolish: !wall.is_load_bearing,
+            confidence: wall.confidence || 0
+          },
+          openings: [],
+          metadata: {
+            locked: wall.is_load_bearing,
+            visible: true,
+            selected: false
+          }
+        }))
+      }
+      
+      // Конвертируем комнаты
+      if (recognitionResult.rooms) {
+        const roomTypeMap = {
+          'LIVING': 'living',
+          'BEDROOM': 'bedroom',
+          'CHILDREN': 'bedroom',
+          'OFFICE': 'living',
+          'KITCHEN': 'kitchen',
+          'KITCHEN_LIVING': 'kitchenGas',
+          'BATHROOM': 'bathroom',
+          'TOILET': 'toilet',
+          'COMBINED_BATHROOM': 'combined',
+          'HALLWAY': 'hallway',
+          'STORAGE': 'storage',
+          'LAUNDRY': 'combined',
+          'BALCONY': 'balcony',
+          'LOGGIA': 'loggia'
+        }
+        
+        elements.rooms = recognitionResult.rooms.map((room, index) => {
+          const polygon = room.boundary?.map(point => ({
+            x: point.x,
+            z: point.y
+          })) || []
+          
+          return {
+            id: room.temp_id || `room_${index}`,
+            type: 'room',
+            name: room.name || `Комната ${index + 1}`,
+            room_type: roomTypeMap[room.type] || 'living',
+            polygon: polygon,
+            area: room.area || 0,
+            perimeter: 0,
+            properties: {
+              has_wet_zone: room.is_wet_zone || false,
+              has_ventilation: false,
+              has_window: room.has_window || false,
+              min_area: 0,
+              confidence: room.confidence || 0
+            }
+          }
+        })
+      }
+      
+      // Конвертируем проёмы (двери/окна)
+      if (recognitionResult.openings) {
+        recognitionResult.openings.forEach((opening, index) => {
+          elements.openings.push({
+            id: opening.temp_id || `opening_${index}`,
+            type: opening.type === 'door' ? 'door' : 'window',
+            position: { x: opening.position?.x || 0, y: 0, z: opening.position?.y || 0 },
+            width: opening.width || 0.9,
+            height: opening.height || 2.1,
+            wall_id: opening.wall_id,
+            properties: {
+              opens_to: opening.opens_to,
+              confidence: opening.confidence || 0
+            }
+          })
+        })
+      }
+      
+      // Конвертируем оборудование в мебель
+      if (recognitionResult.equipment) {
+        elements.furniture = recognitionResult.equipment.map((equip, index) => ({
+          id: equip.temp_id || `furn_${index}`,
+          type: 'furniture',
+          name: equip.type,
+          furniture_type: equip.type,
+          position: { x: equip.position?.x || 0, y: 0, z: equip.position?.y || 0 },
+          rotation: { x: 0, y: 0, z: 0 },
+          dimensions: {
+            width: equip.dimensions?.width || 0.6,
+            height: 0.85,
+            depth: equip.dimensions?.depth || 0.6
+          },
+          room_id: equip.room_id,
+          metadata: {
+            category: 'equipment',
+            confidence: equip.confidence || 0
+          }
+        }))
+      }
+      
+      // Конвертируем инженерные элементы
+      if (recognitionResult.utilities) {
+        elements.utilities = recognitionResult.utilities.map((utility, index) => ({
+          id: utility.temp_id || `utility_${index}`,
+          type: 'utility',
+          name: utility.type,
+          utility_type: utility.type,
+          position: { x: utility.position?.x || 0, y: 0, z: utility.position?.y || 0 },
+          properties: {
+            can_relocate: utility.can_relocate || false,
+            protection_zone: utility.protection_zone || 0.3
+          },
+          room_id: utility.room_id
+        }))
+      }
+      
+      return elements
     }
   }
 }

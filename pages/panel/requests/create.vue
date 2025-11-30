@@ -49,21 +49,40 @@
           <p v-if="errors.category" class="text-sm text-red-400 mt-2">{{ errors.category }}</p>
         </div>
 
-        <!-- Привязка к планировке -->
+        <!-- Детали заявки -->
         <div class="bg-[#26272A] rounded-xl p-6 border border-[#26272A]">
-          <h3 class="text-lg font-semibold text-white mb-4">Планировка (опционально)</h3>
-          <Dropdown
-            v-model="form.floor_plan_id"
-            :options="floorPlans"
-            optionLabel="name"
-            optionValue="id"
-            placeholder="Выберите планировку"
-            showClear
-            class="w-full bg-[#18181B] border-[#26272A]"
-          />
-          <p class="text-sm text-gray-400 mt-2">
-            Привяжите заявку к планировке для более точной консультации
-          </p>
+          <h3 class="text-lg font-semibold text-white mb-4">Детали заявки</h3>
+          <div class="space-y-4">
+            <div>
+              <label class="block text-sm text-gray-400 mb-2">Заголовок *</label>
+              <InputText
+                v-model="form.title"
+                placeholder="Краткое описание заявки"
+                class="w-full bg-[#18181B] border-[#26272A] text-white"
+              />
+              <p v-if="errors.title" class="text-sm text-red-400 mt-1">{{ errors.title }}</p>
+            </div>
+            <div>
+              <label class="block text-sm text-gray-400 mb-2">Описание</label>
+              <Textarea
+                v-model="form.description"
+                placeholder="Подробное описание вашего вопроса или задачи..."
+                rows="3"
+                class="w-full bg-[#18181B] border-[#26272A] text-white"
+              />
+            </div>
+            <div>
+              <label class="block text-sm text-gray-400 mb-2">Приоритет</label>
+              <Dropdown
+                v-model="form.priority"
+                :options="priorities"
+                optionLabel="label"
+                optionValue="value"
+                placeholder="Выберите приоритет"
+                class="w-full bg-[#18181B] border-[#26272A]"
+              />
+            </div>
+          </div>
         </div>
 
         <!-- Контактная информация -->
@@ -100,16 +119,6 @@
           </div>
         </div>
 
-        <!-- Комментарий -->
-        <div class="bg-[#26272A] rounded-xl p-6 border border-[#26272A]">
-          <h3 class="text-lg font-semibold text-white mb-4">Комментарий</h3>
-          <Textarea
-            v-model="form.comment"
-            placeholder="Опишите вашу задачу или вопрос..."
-            rows="4"
-            class="w-full bg-[#18181B] border-[#26272A] text-white"
-          />
-        </div>
 
         <!-- Кнопки -->
         <div class="flex gap-4">
@@ -193,23 +202,29 @@ export default {
     return {
       form: {
         category: null,
-        floor_plan_id: null,
+        title: '',
+        description: '',
+        priority: 'normal',
         contact_name: '',
         contact_phone: '',
-        contact_email: '',
-        comment: ''
+        contact_email: ''
       },
       errors: {},
-      floorPlans: [],
       loading: false,
       apiStore: null,
+      priorities: [
+        { label: 'Низкий', value: 'low' },
+        { label: 'Обычный', value: 'normal' },
+        { label: 'Высокий', value: 'high' },
+        { label: 'Срочный', value: 'urgent' }
+      ],
       serviceCategories: [
         {
           code: 'consultation',
           name: 'Консультация',
           description: 'Ответы на вопросы по перепланировке',
           icon: 'pi pi-comments',
-          base_price: 3000,
+          base_price: 2000,
           estimated_days: '1-2 дня',
           includes: [
             'Онлайн-консультация со специалистом',
@@ -219,9 +234,23 @@ export default {
           ]
         },
         {
-          code: 'documentation',
-          name: 'Подготовка документов',
-          description: 'Оформление документации для согласования',
+          code: 'verification',
+          name: 'Проверка планировки',
+          description: 'Проверка на соответствие нормам',
+          icon: 'pi pi-shield',
+          base_price: 5000,
+          estimated_days: '2-3 дня',
+          includes: [
+            'Анализ планировки экспертом',
+            'Проверка на соответствие СНиП',
+            'Детальный отчёт о нарушениях',
+            'Рекомендации по исправлению'
+          ]
+        },
+        {
+          code: 'project',
+          name: 'Разработка проекта',
+          description: 'Полный проект перепланировки',
           icon: 'pi pi-file-edit',
           base_price: 15000,
           estimated_days: '5-7 дней',
@@ -233,25 +262,11 @@ export default {
           ]
         },
         {
-          code: 'expert_visit',
-          name: 'Выезд специалиста',
-          description: 'Осмотр объекта и консультация на месте',
-          icon: 'pi pi-map-marker',
-          base_price: 5000,
-          estimated_days: 'По согласованию',
-          includes: [
-            'Выезд инженера на объект',
-            'Осмотр и замеры',
-            'Фиксация текущего состояния',
-            'Устная консультация на месте'
-          ]
-        },
-        {
-          code: 'full_package',
-          name: 'Полный пакет услуг',
-          description: 'Под ключ: от проекта до согласования',
+          code: 'approval',
+          name: 'Согласование',
+          description: 'Полное согласование перепланировки',
           icon: 'pi pi-star',
-          base_price: 50000,
+          base_price: 15000,
           estimated_days: '2-4 недели',
           includes: [
             'Выезд специалиста',
@@ -279,28 +294,18 @@ export default {
     if (this.$route.query.type) {
       this.form.category = this.$route.query.type
     }
-    await this.fetchFloorPlans()
+    this.workspaceIdCookie = useCookie('workspace_id')
   },
   methods: {
-    async fetchFloorPlans() {
-      try {
-        const result = await $fetch(`${this.apiStore.url}api/v1/floor-plans`, {
-          method: 'GET',
-          headers: {
-            'Authorization': `Bearer ${this.accessTokenCookie.value}`,
-            'Content-Type': 'application/json'
-          }
-        })
-        this.floorPlans = result.floor_plans || result.data || []
-      } catch (error) {
-        console.error('Ошибка загрузки планировок:', error)
-      }
-    },
     validate() {
       this.errors = {}
       
       if (!this.form.category) {
         this.errors.category = 'Выберите услугу'
+      }
+      
+      if (!this.form.title.trim()) {
+        this.errors.title = 'Введите заголовок заявки'
       }
       
       if (!this.form.contact_name.trim()) {
@@ -321,6 +326,8 @@ export default {
       this.loading = true
       
       try {
+        const workspaceId = this.workspaceIdCookie?.value
+        
         const result = await $fetch(`${this.apiStore.url}api/v1/requests`, {
           method: 'POST',
           headers: {
@@ -328,12 +335,16 @@ export default {
             'Content-Type': 'application/json'
           },
           body: {
-            floor_plan_id: this.form.floor_plan_id || undefined,
+            workspace_id: workspaceId || undefined,
+            title: this.form.title.trim() || this.selectedService?.name || 'Заявка',
+            description: this.form.description.trim() || undefined,
             category: this.form.category,
-            contact_name: this.form.contact_name.trim(),
-            contact_phone: this.form.contact_phone.trim(),
-            contact_email: this.form.contact_email.trim() || undefined,
-            comment: this.form.comment.trim() || undefined
+            priority: this.form.priority,
+            contact: {
+              name: this.form.contact_name.trim(),
+              phone: this.form.contact_phone.trim(),
+              email: this.form.contact_email.trim() || undefined
+            }
           }
         })
         
