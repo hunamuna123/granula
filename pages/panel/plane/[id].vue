@@ -163,8 +163,8 @@
       </div>
       <template #footer>
         <div class="flex gap-3 justify-end">
-          <Button label="Отмена" outlined @click="showNameDialog = false" />
-          <Button label="Сохранить" @click="updatePlanName" />
+          <Button label="Отмена" outlined class="border-[#26272A] text-white hover:bg-[#27272A]" @click="showNameDialog = false" />
+          <Button label="Сохранить" class="bg-[#2563EB] hover:bg-[#1d4ed8] border-none" @click="updatePlanName" />
         </div>
       </template>
     </Dialog>
@@ -189,8 +189,8 @@
       </div>
       <template #footer>
         <div class="flex gap-3 justify-end">
-          <Button label="Отмена" outlined @click="showVariantsDialog = false" />
-          <Button label="Сгенерировать (PRO)" disabled class="bg-[#2563EB]" />
+          <Button label="Отмена" outlined class="border-[#26272A] text-white hover:bg-[#27272A]" @click="showVariantsDialog = false" />
+          <Button label="Сгенерировать (PRO)" disabled class="bg-[#2563EB] border-none" />
         </div>
       </template>
     </Dialog>
@@ -254,10 +254,11 @@
       </div>
       <template #footer>
         <div class="flex gap-3 justify-end">
-          <Button label="Отмена" outlined @click="showBTIDialog = false" />
+          <Button label="Отмена" outlined class="border-[#26272A] text-white hover:bg-[#27272A]" @click="showBTIDialog = false" />
           <Button 
             label="Отправить заявку" 
             :disabled="!selectedService || !btiForm.name || !btiForm.phone"
+            class="bg-[#2563EB] hover:bg-[#1d4ed8] border-none"
             @click="submitBTIRequest"
           />
         </div>
@@ -275,8 +276,8 @@
       <p class="text-gray-400 text-sm mb-6">Это действие нельзя отменить.</p>
       <template #footer>
         <div class="flex gap-3 justify-end">
-          <Button label="Отмена" outlined @click="showDeleteDialog = false" />
-          <Button label="Удалить" severity="danger" @click="deletePlan" />
+          <Button label="Отмена" outlined class="border-[#26272A] text-white hover:bg-[#27272A]" @click="showDeleteDialog = false" />
+          <Button label="Удалить" severity="danger" class="border-none" @click="deletePlan" />
         </div>
       </template>
     </Dialog>

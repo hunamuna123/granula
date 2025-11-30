@@ -187,8 +187,8 @@
         <p class="text-white mb-4">Вы уверены, что хотите удалить планировку "{{ planToDelete?.name }}"?</p>
         <p class="text-gray-400 text-sm mb-6">Это действие нельзя отменить.</p>
         <div class="flex gap-3 justify-end">
-          <Button label="Отмена" outlined @click="deleteDialog = false" />
-          <Button label="Удалить" severity="danger" :loading="deleting" @click="deletePlan" />
+          <Button label="Отмена" outlined class="border-[#26272A] text-white hover:bg-[#27272A]" @click="deleteDialog = false" />
+          <Button label="Удалить" severity="danger" class="border-none" :loading="deleting" @click="deletePlan" />
         </div>
       </Dialog>
     </template>

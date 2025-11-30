@@ -94,7 +94,7 @@
               :outlined="currentWorkspaceId !== workspace.id"
               size="small"
               :class="currentWorkspaceId === workspace.id 
-                ? 'flex-1 bg-green-600 border-green-600 hover:bg-green-700' 
+                ? 'flex-1 bg-[#2563EB] border-[#2563EB] hover:bg-[#1d4ed8]' 
                 : 'flex-1 border-[#26272A] text-white hover:bg-[#27272A]'"
               @click.stop="selectWorkspace(workspace)"
             />
@@ -145,8 +145,8 @@
       <p class="text-white mb-4">Вы уверены, что хотите удалить воркспейс "{{ workspaceToDelete?.name }}"?</p>
       <p class="text-gray-400 text-sm mb-6">Это действие нельзя отменить. Все данные воркспейса будут удалены.</p>
       <div class="flex gap-3 justify-end">
-        <Button label="Отмена" outlined @click="deleteDialog = false" />
-        <Button label="Удалить" severity="danger" :loading="deleting" @click="deleteWorkspace" />
+        <Button label="Отмена" outlined class="border-[#26272A] text-white hover:bg-[#27272A]" @click="deleteDialog = false" />
+        <Button label="Удалить" severity="danger" class="border-none" :loading="deleting" @click="deleteWorkspace" />
       </div>
     </Dialog>
   </div>

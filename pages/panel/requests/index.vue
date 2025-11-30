@@ -153,8 +153,8 @@
       <p class="text-white mb-4">Вы уверены, что хотите отменить заявку?</p>
       <p class="text-gray-400 text-sm mb-6">Это действие нельзя отменить.</p>
       <div class="flex gap-3 justify-end">
-        <Button label="Нет" outlined @click="cancelDialog = false" />
-        <Button label="Да, отменить" severity="danger" @click="cancelRequest" />
+        <Button label="Нет" outlined class="border-[#26272A] text-white hover:bg-[#27272A]" @click="cancelDialog = false" />
+        <Button label="Да, отменить" severity="danger" class="border-none" @click="cancelRequest" />
       </div>
     </Dialog>
   </div>

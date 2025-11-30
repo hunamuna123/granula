@@ -258,8 +258,8 @@
       </div>
       <template #footer>
         <div class="flex gap-3 justify-end">
-          <Button label="Отмена" outlined @click="showEditDialog = false" />
-          <Button label="Сохранить" :loading="saving" @click="updateWorkspace" />
+          <Button label="Отмена" outlined class="border-[#26272A] text-white hover:bg-[#27272A]" @click="showEditDialog = false" />
+          <Button label="Сохранить" class="bg-[#2563EB] hover:bg-[#1d4ed8] border-none" :loading="saving" @click="updateWorkspace" />
         </div>
       </template>
     </Dialog>
@@ -287,8 +287,8 @@
       </div>
       <template #footer>
         <div class="flex gap-3 justify-end">
-          <Button label="Отмена" outlined @click="showAddMemberDialog = false" />
-          <Button label="Добавить" :loading="addingMember" :disabled="!newMemberEmail" @click="addMember" />
+          <Button label="Отмена" outlined class="border-[#26272A] text-white hover:bg-[#27272A]" @click="showAddMemberDialog = false" />
+          <Button label="Добавить" class="bg-[#2563EB] hover:bg-[#1d4ed8] border-none" :loading="addingMember" :disabled="!newMemberEmail" @click="addMember" />
         </div>
       </template>
     </Dialog>
@@ -303,8 +303,8 @@
       <p class="text-white mb-4">Вы уверены, что хотите удалить участника "{{ memberToRemove?.name || memberToRemove?.email }}"?</p>
       <template #footer>
         <div class="flex gap-3 justify-end">
-          <Button label="Отмена" outlined @click="showRemoveMemberDialog = false" />
-          <Button label="Удалить" severity="danger" :loading="removingMember" @click="removeMember" />
+          <Button label="Отмена" outlined class="border-[#26272A] text-white hover:bg-[#27272A]" @click="showRemoveMemberDialog = false" />
+          <Button label="Удалить" severity="danger" class="border-none" :loading="removingMember" @click="removeMember" />
         </div>
       </template>
     </Dialog>
@@ -320,8 +320,8 @@
       <p class="text-gray-400 text-sm mb-6">Это действие нельзя отменить. Все данные воркспейса будут удалены.</p>
       <template #footer>
         <div class="flex gap-3 justify-end">
-          <Button label="Отмена" outlined @click="showDeleteDialog = false" />
-          <Button label="Удалить" severity="danger" :loading="deleting" @click="deleteWorkspace" />
+          <Button label="Отмена" outlined class="border-[#26272A] text-white hover:bg-[#27272A]" @click="showDeleteDialog = false" />
+          <Button label="Удалить" severity="danger" class="border-none" :loading="deleting" @click="deleteWorkspace" />
         </div>
       </template>
     </Dialog>

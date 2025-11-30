@@ -131,8 +131,8 @@
       <p class="text-white mb-4">Вы уверены, что хотите удалить все уведомления?</p>
       <p class="text-gray-400 text-sm mb-6">Это действие нельзя отменить.</p>
       <div class="flex gap-3 justify-end">
-        <Button label="Отмена" outlined @click="clearDialog = false" />
-        <Button label="Удалить все" severity="danger" @click="clearAllNotifications" />
+        <Button label="Отмена" outlined class="border-[#26272A] text-white hover:bg-[#27272A]" @click="clearDialog = false" />
+        <Button label="Удалить все" severity="danger" class="border-none" @click="clearAllNotifications" />
       </div>
     </Dialog>
   </div>

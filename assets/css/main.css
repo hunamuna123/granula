@@ -202,3 +202,416 @@ body,
   background: #2563EB !important;
   border-color: #2563EB !important;
 }
+
+/* Toggle Switch */
+.p-toggleswitch.p-toggleswitch-checked .p-toggleswitch-slider {
+  background: #2563EB !important;
+}
+
+/* InputSwitch (legacy) */
+.p-inputswitch.p-inputswitch-checked .p-inputswitch-slider {
+  background: #2563EB !important;
+}
+
+/* Tabs */
+.p-tablist-tab-list {
+  background: #18181B !important;
+  border-color: #26272A !important;
+}
+
+.p-tab.p-tab-active {
+  color: #2563EB !important;
+  border-color: #2563EB !important;
+}
+
+.p-tabpanel {
+  background: #18181B !important;
+}
+
+/* SelectButton */
+.p-selectbutton .p-togglebutton.p-togglebutton-checked {
+  background: #2563EB !important;
+  border-color: #2563EB !important;
+}
+
+/* Slider */
+.p-slider .p-slider-range {
+  background: #2563EB !important;
+}
+
+.p-slider .p-slider-handle {
+  background: #2563EB !important;
+  border-color: #2563EB !important;
+}
+
+/* Rating */
+.p-rating .p-rating-icon.p-rating-icon-active {
+  color: #2563EB !important;
+}
+
+/* Chip */
+.p-chip {
+  background: #26272A !important;
+  color: white !important;
+}
+
+/* Badge */
+.p-badge {
+  background: #2563EB !important;
+}
+
+/* Tag - Primary */
+.p-tag {
+  background: #2563EB !important;
+}
+
+.p-tag.p-tag-success {
+  background: #22c55e !important;
+}
+
+.p-tag.p-tag-warning {
+  background: #f59e0b !important;
+}
+
+.p-tag.p-tag-danger {
+  background: #ef4444 !important;
+}
+
+.p-tag.p-tag-info {
+  background: #2563EB !important;
+}
+
+/* Steps */
+.p-steps .p-steps-item.p-steps-item-active .p-menuitem-link {
+  color: #2563EB !important;
+}
+
+.p-steps .p-steps-item.p-steps-item-active .p-steps-number {
+  background: #2563EB !important;
+  border-color: #2563EB !important;
+}
+
+/* Stepper */
+.p-stepper .p-stepper-action.p-stepper-action-active .p-stepper-number {
+  background: #2563EB !important;
+  border-color: #2563EB !important;
+}
+
+/* Menu items */
+.p-menuitem-link:not(.p-disabled).p-focus {
+  background: rgba(37, 99, 235, 0.1) !important;
+}
+
+.p-menuitem-link:not(.p-disabled):hover {
+  background: #27272A !important;
+}
+
+/* Dropdown panel */
+.p-dropdown-panel {
+  background: #18181B !important;
+  border-color: #26272A !important;
+}
+
+.p-dropdown-panel .p-dropdown-items .p-dropdown-item {
+  color: white !important;
+}
+
+.p-dropdown-panel .p-dropdown-items .p-dropdown-item:hover {
+  background: #27272A !important;
+}
+
+.p-dropdown-panel .p-dropdown-items .p-dropdown-item.p-highlight {
+  background: rgba(37, 99, 235, 0.2) !important;
+  color: #2563EB !important;
+}
+
+/* Listbox */
+.p-listbox {
+  background: #18181B !important;
+  border-color: #26272A !important;
+}
+
+.p-listbox .p-listbox-list .p-listbox-option {
+  color: white !important;
+}
+
+.p-listbox .p-listbox-list .p-listbox-option:hover {
+  background: #27272A !important;
+}
+
+.p-listbox .p-listbox-list .p-listbox-option.p-listbox-option-selected {
+  background: rgba(37, 99, 235, 0.2) !important;
+  color: #2563EB !important;
+}
+
+/* MultiSelect */
+.p-multiselect {
+  background: #18181B !important;
+  border-color: #26272A !important;
+}
+
+.p-multiselect-panel {
+  background: #18181B !important;
+  border-color: #26272A !important;
+}
+
+.p-multiselect-panel .p-multiselect-items .p-multiselect-option {
+  color: white !important;
+}
+
+.p-multiselect-panel .p-multiselect-items .p-multiselect-option:hover {
+  background: #27272A !important;
+}
+
+.p-multiselect-panel .p-multiselect-items .p-multiselect-option.p-multiselect-option-selected {
+  background: rgba(37, 99, 235, 0.2) !important;
+}
+
+/* Calendar / DatePicker */
+.p-datepicker {
+  background: #18181B !important;
+  border-color: #26272A !important;
+  color: white !important;
+}
+
+.p-datepicker .p-datepicker-header {
+  background: #18181B !important;
+  border-color: #26272A !important;
+  color: white !important;
+}
+
+.p-datepicker table td > span.p-highlight {
+  background: #2563EB !important;
+  color: white !important;
+}
+
+.p-datepicker table td > span:focus {
+  box-shadow: 0 0 0 0.2rem rgba(37, 99, 235, 0.2) !important;
+}
+
+/* InputNumber */
+.p-inputnumber-button {
+  background: #26272A !important;
+  border-color: #26272A !important;
+  color: white !important;
+}
+
+.p-inputnumber-button:hover {
+  background: #3f3f46 !important;
+}
+
+/* Password Strength Meter */
+.p-password-meter {
+  background: #26272A !important;
+}
+
+.p-password-strength-strong {
+  background: #2563EB !important;
+}
+
+/* FileUpload */
+.p-fileupload {
+  background: #18181B !important;
+  border-color: #26272A !important;
+}
+
+.p-fileupload .p-fileupload-buttonbar {
+  background: #18181B !important;
+  border-color: #26272A !important;
+}
+
+.p-fileupload .p-fileupload-content {
+  background: #18181B !important;
+}
+
+/* DataTable */
+.p-datatable {
+  background: #18181B !important;
+}
+
+.p-datatable .p-datatable-header {
+  background: #18181B !important;
+  border-color: #26272A !important;
+  color: white !important;
+}
+
+.p-datatable .p-datatable-thead > tr > th {
+  background: #18181B !important;
+  border-color: #26272A !important;
+  color: white !important;
+}
+
+.p-datatable .p-datatable-tbody > tr {
+  background: #18181B !important;
+  color: white !important;
+}
+
+.p-datatable .p-datatable-tbody > tr > td {
+  border-color: #26272A !important;
+}
+
+.p-datatable .p-datatable-tbody > tr:hover {
+  background: #27272A !important;
+}
+
+.p-datatable .p-datatable-tbody > tr.p-row-selected {
+  background: rgba(37, 99, 235, 0.15) !important;
+  color: white !important;
+}
+
+/* Paginator */
+.p-paginator {
+  background: #18181B !important;
+  border-color: #26272A !important;
+}
+
+.p-paginator .p-paginator-page.p-paginator-page-selected {
+  background: #2563EB !important;
+  border-color: #2563EB !important;
+}
+
+/* Panel */
+.p-panel {
+  background: #18181B !important;
+  border-color: #26272A !important;
+}
+
+.p-panel .p-panel-header {
+  background: #18181B !important;
+  border-color: #26272A !important;
+  color: white !important;
+}
+
+.p-panel .p-panel-content {
+  background: #18181B !important;
+  color: white !important;
+}
+
+/* Accordion */
+.p-accordion .p-accordion-header .p-accordion-header-link {
+  background: #18181B !important;
+  border-color: #26272A !important;
+  color: white !important;
+}
+
+.p-accordion .p-accordion-header:not(.p-disabled).p-accordion-header-active .p-accordion-header-link {
+  background: #26272A !important;
+  border-color: #2563EB !important;
+  color: #2563EB !important;
+}
+
+.p-accordion .p-accordion-content {
+  background: #18181B !important;
+  border-color: #26272A !important;
+  color: white !important;
+}
+
+/* Card */
+.p-card {
+  background: #18181B !important;
+  color: white !important;
+}
+
+/* Toast */
+.p-toast .p-toast-message {
+  background: #18181B !important;
+  border-color: #26272A !important;
+}
+
+.p-toast .p-toast-message.p-toast-message-success {
+  border-left-color: #22c55e !important;
+}
+
+.p-toast .p-toast-message.p-toast-message-info {
+  border-left-color: #2563EB !important;
+}
+
+.p-toast .p-toast-message.p-toast-message-warn {
+  border-left-color: #f59e0b !important;
+}
+
+.p-toast .p-toast-message.p-toast-message-error {
+  border-left-color: #ef4444 !important;
+}
+
+/* Message */
+.p-message.p-message-info {
+  background: rgba(37, 99, 235, 0.1) !important;
+  border-color: #2563EB !important;
+  color: #60a5fa !important;
+}
+
+/* ConfirmDialog / ConfirmPopup */
+.p-confirmdialog {
+  background: #18181B !important;
+}
+
+.p-confirmpopup {
+  background: #18181B !important;
+  border-color: #26272A !important;
+}
+
+/* Tooltip */
+.p-tooltip .p-tooltip-text {
+  background: #26272A !important;
+  color: white !important;
+}
+
+/* OverlayPanel */
+.p-overlaypanel {
+  background: #18181B !important;
+  border-color: #26272A !important;
+  color: white !important;
+}
+
+/* Sidebar */
+.p-sidebar {
+  background: #18181B !important;
+  border-color: #26272A !important;
+}
+
+.p-sidebar .p-sidebar-header {
+  background: #18181B !important;
+  color: white !important;
+}
+
+/* ScrollPanel */
+.p-scrollpanel .p-scrollpanel-bar {
+  background: #26272A !important;
+}
+
+/* Skeleton */
+.p-skeleton {
+  background: #26272A !important;
+}
+
+.p-skeleton::after {
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.05), transparent) !important;
+}
+
+/* Divider */
+.p-divider.p-divider-solid.p-divider-horizontal::before {
+  border-color: #26272A !important;
+}
+
+/* Timeline */
+.p-timeline .p-timeline-event-marker {
+  background: #2563EB !important;
+  border-color: #2563EB !important;
+}
+
+/* SpeedDial */
+.p-speeddial-action {
+  background: #2563EB !important;
+  color: white !important;
+}
+
+/* Global focus ring color */
+*:focus {
+  outline-color: #2563EB !important;
+}
+
+.p-focus,
+*:focus-visible {
+  box-shadow: 0 0 0 0.2rem rgba(37, 99, 235, 0.2) !important;
+}
